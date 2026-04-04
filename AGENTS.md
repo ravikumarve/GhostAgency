@@ -1,17 +1,20 @@
 # AGENTS.md — Ghost Agency Coding Intelligence File
 
-> **Runtime context for AI coding agents (opencode + DeepSeek R1/V3)**
+> **Runtime context for AI coding agents (opencode + DeepSeek V3.1 via NVIDIA NIM)**
 > This file is authoritative. Follow every instruction exactly. Never guess; always reference this file first.
+> **Scale:** 156 installed agents across `ghostagency/` directory.
 
 ---
 
 ## 🧠 AGENT IDENTITY & MISSION
 
-You are the **Ghost Agency Code Agent** — an autonomous AI developer building a production-grade, multi-tenant AI Employee SaaS platform.
+You are the **Ghost Agency Code Agent** — an autonomous AI developer building a production-grade, multi-tenant AI Employee SaaS platform with **156 specialised AI agents** organised into functional squads.
 
 **Your north star:** Every line of code you write must be deployable, sellable, and maintainable by a solo operator with zero DevOps team.
 
-**Model context:** You are running inside **opencode** with **DeepSeek R1 or DeepSeek V3**. Optimise reasoning for long-horizon multi-step tasks. Think before you act. When uncertain, reason step-by-step explicitly before generating code.
+**Model context:** You are running inside **opencode** with **DeepSeek V3.1 via NVIDIA NIM** (primary) or **DeepSeek R1** (reasoning-heavy tasks). Optimise for long-horizon multi-step tasks. Think before you act. When uncertain, reason step-by-step explicitly before generating code.
+
+**Scale context:** This codebase manages 156 agents. Every design decision must account for horizontal scale — naming conventions, registry lookups, and squad routing must work for agent #1 and agent #156 identically.
 
 ---
 
@@ -20,30 +23,87 @@ You are the **Ghost Agency Code Agent** — an autonomous AI developer building 
 Always maintain this exact layout. Never create files outside this tree without explicit instruction.
 
 ```
-GhostAgency/
-├── ghost_agency_employees.py     # Core AI employee classes (primary target file)
-├── config.py                     # Centralised config and environment loading
-├── logger.py                     # Shared JSON logger
-├── kb/                           # Knowledge base loader utilities
-│   └── loader.py
-├── integrations/                 # Third-party integrations (email, CRM, etc.)
+ghostagency/
+├── core/
+│   ├── base_agent.py              # AIAgent abstract base (all 156 agents inherit this)
+│   ├── agent_registry.py          # Central registry — maps slug → class (156 entries)
+│   ├── squad_router.py            # Routes tasks to correct squad
+│   ├── config.py                  # Centralised config and environment loading
+│   ├── logger.py                  # Shared structured JSON logger
+│   └── exceptions.py              # Custom exception hierarchy
+│
+├── agents/                        # 156 agent modules, organised by squad
+│   ├── squad_support/             # Customer-facing support agents
+│   ├── squad_sales/               # Sales, SDR, and revenue agents
+│   ├── squad_content/             # Social media, copywriting, SEO agents
+│   ├── squad_ops/                 # Executive assist, scheduling, admin agents
+│   ├── squad_data/                # Research, analytics, reporting agents
+│   ├── squad_dev/                 # Developer assist, code review, QA agents
+│   ├── squad_finance/             # Invoicing, expense, bookkeeping agents
+│   ├── squad_hr/                  # Recruiting, onboarding, culture agents
+│   ├── squad_legal/               # Contract review, compliance, NDA agents
+│   └── squad_custom/              # Client-specific custom agents
+│
+├── kb/                            # Knowledge base loader utilities
+│   ├── loader.py
+│   ├── chunker.py                 # KB chunking for large documents
+│   └── cache.py                   # In-memory KB cache (load once, reuse)
+│
+├── integrations/                  # Third-party integrations
 │   ├── email_smtp.py
-│   └── webhook.py
-├── tests/                        # All test files live here
-│   ├── conftest.py               # Shared fixtures
-│   ├── test_customer_support.py
-│   ├── test_sales_sdr.py
-│   ├── test_social_media.py
-│   └── test_executive_assistant.py
-├── demo/                         # Standalone demo scripts
-│   └── run_demo.py
-├── logs/                         # Auto-created at runtime, per-client subdirs
+│   ├── webhook.py
+│   ├── telegram_bot.py
+│   ├── gumroad.py                 # License key validation
+│   └── nim_client.py              # NVIDIA NIM API client (primary LLM)
+│
+├── api/                           # FastAPI REST layer
+│   ├── main.py
+│   ├── routes/
+│   │   ├── agents.py              # /agents/* endpoints
+│   │   ├── squads.py              # /squads/* endpoints
+│   │   └── health.py              # /health, /metrics
+│   └── middleware/
+│       ├── auth.py                # License key + API key middleware
+│       └── rate_limiter.py
+│
+├── tests/                         # All test files live here
+│   ├── conftest.py                # Shared fixtures and mock factories
+│   ├── test_base_agent.py
+│   ├── test_agent_registry.py
+│   ├── test_squad_router.py
+│   ├── squads/                    # One test file per squad
+│   │   ├── test_squad_support.py
+│   │   ├── test_squad_sales.py
+│   │   ├── test_squad_content.py
+│   │   ├── test_squad_ops.py
+│   │   ├── test_squad_data.py
+│   │   ├── test_squad_dev.py
+│   │   ├── test_squad_finance.py
+│   │   ├── test_squad_hr.py
+│   │   ├── test_squad_legal.py
+│   │   └── test_squad_custom.py
+│   └── integration/
+│       └── test_nim_client.py
+│
+├── demo/
+│   ├── run_demo.py                # Full interactive demo (all squads)
+│   └── run_squad_demo.py          # Demo a single squad by name
+│
+├── scripts/
+│   ├── list_agents.py             # Print all 156 agents with squad + status
+│   ├── validate_registry.py       # Assert 156 agents registered correctly
+│   └── benchmark.py              # Response time benchmarks per squad
+│
+├── logs/                          # Auto-created at runtime
 │   └── {client_slug}/
-├── AGENTS.md                     # This file
-├── README.md                     # Human-facing quickstart
-├── GHOST_AGENCY.md               # Business plan (do not modify)
-├── requirements.txt              # Pinned Python dependencies
-└── .env.example                  # Template for secrets
+│       └── {squad}/
+│           └── {agent_slug}/
+│
+├── AGENTS.md                      # This file
+├── README.md
+├── GHOST_AGENCY.md                # Business plan (do not modify)
+├── requirements.txt
+└── .env.example
 ```
 
 ---
@@ -52,53 +112,61 @@ GhostAgency/
 
 ### Environment Setup
 ```bash
-# Python version required
 python3 --version   # Must be 3.10+
 
-# Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # Linux/macOS
+source .venv/bin/activate
 
-# Install all dependencies
 pip install -r requirements.txt
-
-# Install dev tools
 pip install black==24.4.2 flake8==7.1.0 pytest==8.2.0 pytest-cov==5.0.0 mypy==1.10.0
 ```
 
-### Ollama Setup (required for local AI)
+### NVIDIA NIM Setup (primary LLM — cloud, no GPU required)
 ```bash
-# Install Ollama (Linux)
+# NIM uses DeepSeek V3.1 via API — no local GPU needed
+# Set in .env:
+# NIM_API_KEY=your_key_here
+# NIM_BASE_URL=https://integrate.api.nvidia.com/v1
+# NIM_MODEL=deepseek-ai/deepseek-v3-0324
+
+# Verify NIM connection
+python -c "from ghostagency.integrations.nim_client import NIMClient; c = NIMClient(); print(c.ping())"
+```
+
+### Ollama Setup (fallback for offline/CPU-only use)
+```bash
 curl -fsSL https://ollama.ai/install.sh | sh
-
-# Pull default model (phi3 is default for CPU-only machines)
-ollama pull phi3
-
-# Pull DeepSeek model (preferred for production quality)
-ollama pull deepseek-r1:7b      # 7B — runs on 8GB RAM
-ollama pull deepseek-r1:14b     # 14B — runs on 16GB RAM (recommended)
-ollama pull deepseek-v2.5       # Full reasoning model
-
-# Start Ollama service
+ollama pull deepseek-r1:7b
+ollama pull phi3            # Lightweight fallback
 ollama serve
-
-# Verify Ollama is running
 curl http://localhost:11434/api/tags
+```
+
+### Agent Registry
+```bash
+# List all 156 agents with squad and status
+python scripts/list_agents.py
+
+# Validate registry integrity (count must equal 156)
+python scripts/validate_registry.py
+
+# Add a new agent to registry (interactive)
+python scripts/list_agents.py --add
 ```
 
 ### Code Quality
 ```bash
-# Format all Python files
+# Format
 black . --line-length 100
 
 # Lint
-flake8 . --max-line-length 100 --exclude .venv,__pycache__
+flake8 . --max-line-length 100 --exclude .venv,__pycache__,logs
 
 # Type check
-mypy ghost_agency_employees.py --ignore-missing-imports
+mypy ghostagency/core/ ghostagency/agents/ --ignore-missing-imports
 
-# Run all checks in sequence (use this before every commit)
-black . --line-length 100 && flake8 . --max-line-length 100 && pytest --tb=short
+# Full pre-commit sequence
+black . --line-length 100 && flake8 . --max-line-length 100 && pytest --tb=short -q
 ```
 
 ### Testing
@@ -106,80 +174,255 @@ black . --line-length 100 && flake8 . --max-line-length 100 && pytest --tb=short
 # Run all tests
 pytest
 
-# Run with coverage report
-pytest --cov=ghost_agency_employees --cov-report=term-missing
+# With coverage
+pytest --cov=ghostagency --cov-report=term-missing
 
-# Run single test class
-pytest tests/test_customer_support.py -v
+# Run a specific squad's tests
+pytest tests/squads/test_squad_support.py -v
 
-# Run single test function
-pytest tests/test_customer_support.py::TestCustomerSupport::test_handle_ticket_basic -v
-
-# Run tests matching keyword
+# Run tests matching a keyword
 pytest -k "escalation" -v
 
-# Run with live stdout (useful for debugging AI responses)
-pytest -s tests/test_customer_support.py
+# Run with live stdout (debug AI responses)
+pytest -s tests/squads/test_squad_support.py
+
+# Benchmark response times across all squads
+python scripts/benchmark.py
 ```
 
 ### Demo & Manual Testing
 ```bash
-# Run full interactive demo
+# Full demo — all squads
 python demo/run_demo.py
 
-# Run specific AI employee demo
-python -c "from ghost_agency_employees import AICustomerSupport; ..."
+# Single squad demo
+python demo/run_squad_demo.py --squad support
+python demo/run_squad_demo.py --squad sales
 
-# Quick smoke test (no Ollama needed — uses mock mode)
+# Mock mode (no LLM calls)
 GHOST_MOCK_AI=true python demo/run_demo.py
 ```
 
 ---
 
-## 🤖 AI EMPLOYEE CLASS ARCHITECTURE
+## 🤖 AGENT ARCHITECTURE
 
 ### Base Class Contract
 
-Every AI employee **must** inherit from `AIEmployee` and implement these methods:
+Every agent **must** inherit from `AIAgent` and implement these methods:
 
 ```python
-class AIEmployee:
+# ghostagency/core/base_agent.py
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import Optional
+from ghostagency.core.config import DEFAULT_MODEL, LOG_DIR
+from ghostagency.core.logger import get_logger
+
+
+class AIAgent(ABC):
     """
-    Abstract base for all Ghost Agency AI employees.
-    
-    Concrete subclasses must implement: primary_action(), get_role_prompt()
+    Abstract base for all 156 Ghost Agency AI agents.
+    Concrete subclasses must implement: primary_action(), get_role_prompt(), agent_slug
     """
-    
-    client_name: str          # Business name (used in logs + prompts)
-    model: str                # Ollama model name (default: "deepseek-r1:7b")
-    conversation_history: list[dict]   # Full conversation log
-    knowledge_base: str       # Loaded KB text (injected into system prompt)
-    
-    def primary_action(self, input: str) -> str:
-        """The main capability of this employee. Must be implemented."""
-        raise NotImplementedError
-    
-    def get_role_prompt(self) -> str:
-        """Returns the system prompt that defines this employee's role."""
-        raise NotImplementedError
-    
-    def _call_ollama(self, prompt: str, model: str = None) -> str:
-        """Shared Ollama caller with retry logic. Never override."""
+
+    # --- Required class-level attributes (define in every subclass) ---
+    agent_slug: str        # e.g. "support-tier1", "sdr-cold-outreach"
+    squad: str             # e.g. "support", "sales", "content"
+    display_name: str      # Human-readable name shown in UI
+    price_tier: str        # e.g. "$800/mo" — used in Gumroad listing
+    version: str = "1.0.0"
+
+    def __init__(
+        self,
+        client_name: str,
+        knowledge_base_path: str | None = None,
+        model: str | None = None,
+    ) -> None:
+        self.client_name = client_name
+        self.model = model or DEFAULT_MODEL
+        self.conversation_history: list[dict] = []
+        self.knowledge_base: str = self._load_kb(knowledge_base_path)
+        self.logger = get_logger(self.agent_slug, client_name)
+
+    @abstractmethod
+    def primary_action(self, input: str, **kwargs) -> str:
+        """The main capability of this agent. Must be implemented."""
         ...
-    
+
+    @abstractmethod
+    def get_role_prompt(self) -> str:
+        """Returns the system prompt defining this agent's role."""
+        ...
+
+    def _call_llm(self, prompt: str, model: str | None = None) -> str:
+        """Shared LLM caller (NIM primary, Ollama fallback). Never override."""
+        ...
+
     def _log_interaction(self, action: str, input: str, output: str) -> None:
-        """Shared JSON logger. Never override."""
+        """Shared structured JSON logger. Never override."""
+        ...
+
+    def _load_kb(self, path: str | None) -> str:
+        """Load and cache knowledge base. Returns empty string if no path."""
+        ...
+
+    def reset_history(self) -> None:
+        """Clear conversation history. Call between client sessions."""
+        self.conversation_history = []
+```
+
+### Agent Registry Pattern
+
+The registry maps every agent slug to its class. It must always contain exactly **156 entries**.
+
+```python
+# ghostagency/core/agent_registry.py
+from __future__ import annotations
+from typing import Type
+from ghostagency.core.base_agent import AIAgent
+
+# Import all 156 agent classes
+from ghostagency.agents.squad_support import *
+from ghostagency.agents.squad_sales import *
+from ghostagency.agents.squad_content import *
+from ghostagency.agents.squad_ops import *
+from ghostagency.agents.squad_data import *
+from ghostagency.agents.squad_dev import *
+from ghostagency.agents.squad_finance import *
+from ghostagency.agents.squad_hr import *
+from ghostagency.agents.squad_legal import *
+from ghostagency.agents.squad_custom import *
+
+AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
+    # support squad (example entries)
+    "support-tier1":             SupportTier1Agent,
+    "support-tier2":             SupportTier2Agent,
+    "support-billing":           SupportBillingAgent,
+    # ... all 156 entries ...
+}
+
+TOTAL_AGENTS = 156
+
+def get_agent(slug: str) -> Type[AIAgent]:
+    if slug not in AGENT_REGISTRY:
+        raise KeyError(f"Agent '{slug}' not found. Run `python scripts/list_agents.py` to see all {TOTAL_AGENTS}.")
+    return AGENT_REGISTRY[slug]
+
+def validate_registry() -> bool:
+    """Called at startup. Fails loudly if count != 156."""
+    count = len(AGENT_REGISTRY)
+    assert count == TOTAL_AGENTS, f"Registry has {count} agents, expected {TOTAL_AGENTS}"
+    return True
+```
+
+### Squad Overview (156 Agents Total)
+
+| Squad | Dir | Agent Count | Price Range | Primary Method |
+|---|---|---|---|---|
+| Support | `squad_support/` | 18 | $600–900/mo | `handle_ticket()` |
+| Sales | `squad_sales/` | 20 | $900–1,500/mo | `qualify_lead()` |
+| Content | `squad_content/` | 22 | $500–800/mo | `create_content()` |
+| Ops | `squad_ops/` | 16 | $1,200–2,000/mo | `handle_request()` |
+| Data | `squad_data/` | 18 | $800–1,400/mo | `run_analysis()` |
+| Dev | `squad_dev/` | 20 | $1,000–1,800/mo | `assist_dev()` |
+| Finance | `squad_finance/` | 14 | $700–1,200/mo | `process_task()` |
+| HR | `squad_hr/` | 14 | $600–1,000/mo | `handle_hr_task()` |
+| Legal | `squad_legal/` | 10 | $1,500–2,500/mo | `review_document()` |
+| Custom | `squad_custom/` | 4 | Custom pricing | `custom_action()` |
+| **Total** | | **156** | | |
+
+---
+
+## 🔌 LLM CLIENT — NVIDIA NIM (Primary)
+
+```python
+# ghostagency/integrations/nim_client.py
+from __future__ import annotations
+import os
+import requests
+from typing import Optional
+from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
+
+NIM_BASE_URL = os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1")
+NIM_MODEL = os.getenv("NIM_MODEL", "deepseek-ai/deepseek-v3-0324")
+NIM_API_KEY = os.getenv("NIM_API_KEY", "")
+NIM_TIMEOUT = int(os.getenv("NIM_TIMEOUT", "60"))
+MAX_RETRIES = int(os.getenv("GHOST_MAX_RETRIES", "3"))
+
+
+class NIMClient:
+    """NVIDIA NIM API client — primary LLM backend for all 156 agents."""
+
+    def __init__(self, model: str | None = None) -> None:
+        self.model = model or NIM_MODEL
+        self.base_url = NIM_BASE_URL
+        self.headers = {
+            "Authorization": f"Bearer {NIM_API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+    def ping(self) -> str:
+        """Verify NIM connectivity."""
+        resp = self.complete("Say: NIM OK")
+        return resp
+
+    def complete(self, prompt: str, system: str = "", max_tokens: int = 1024) -> str:
+        """Single-turn completion. Retries up to MAX_RETRIES."""
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+
+        for attempt in range(MAX_RETRIES):
+            try:
+                response = requests.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=self.headers,
+                    json={"model": self.model, "messages": messages, "max_tokens": max_tokens},
+                    timeout=NIM_TIMEOUT,
+                )
+                response.raise_for_status()
+                return response.json()["choices"][0]["message"]["content"].strip()
+
+            except requests.Timeout:
+                if attempt == MAX_RETRIES - 1:
+                    raise LLMTimeoutError(f"NIM timeout after {NIM_TIMEOUT}s on attempt {attempt + 1}")
+
+            except requests.ConnectionError as e:
+                raise LLMConnectionError(f"NIM connection failed: {e}")
+
+            except (KeyError, IndexError) as e:
+                return f"ERROR: Unexpected NIM response format: {e}"
+
+        return "ERROR: Max retries exceeded"
+
+
+class OllamaFallbackClient:
+    """Fallback to local Ollama when NIM is unavailable (CPU-only mode)."""
+
+    OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+
+    def complete(self, prompt: str, model: str = "deepseek-r1:7b") -> str:
         ...
 ```
 
-### The Four AI Employees
+### LLM Selection Logic (in `base_agent.py`)
 
-| Class | File Section | Price Tier | Key Method |
-|---|---|---|---|
-| `AICustomerSupport` | Lines ~50-150 | $800/mo | `handle_ticket()` |
-| `AISalesDevelopmentRep` | Lines ~151-280 | $1,200/mo | `qualify_lead()` |
-| `AISocialMediaManager` | Lines ~281-400 | $600/mo | `create_post()` |
-| `AIExecutiveAssistant` | Lines ~401-520 | $1,500/mo | `handle_request()` |
+```python
+def _call_llm(self, prompt: str, model: str | None = None) -> str:
+    """NIM primary → Ollama fallback → Mock."""
+    if os.getenv("GHOST_MOCK_AI") == "true":
+        return f"[MOCK] Response for: {prompt[:50]}"
+
+    try:
+        client = NIMClient(model=model or self.model)
+        return client.complete(prompt, system=self.get_role_prompt())
+    except LLMConnectionError:
+        # Fallback to Ollama (CPU-only machines)
+        fallback = OllamaFallbackClient()
+        return fallback.complete(prompt, model="phi3")
+```
 
 ---
 
@@ -187,22 +430,38 @@ class AIEmployee:
 
 ### Python Version & Type Hints
 ```python
-# REQUIRED: Python 3.10+ syntax
 from __future__ import annotations
 from typing import Optional
 
 # Use union type syntax (3.10+)
-def handle_ticket(self, message: str, email: str | None = None) -> str:
-    ...
+def primary_action(self, input: str, context: dict | None = None) -> str: ...
 
-# Use match-case for state machines
-match ticket_type:
-    case "billing":
-        return self._handle_billing(message)
-    case "technical":
-        return self._handle_technical(message)
-    case _:
-        return self._handle_general(message)
+# Use match-case for routing
+match squad:
+    case "support":   return SupportRouter(task)
+    case "sales":     return SalesRouter(task)
+    case "content":   return ContentRouter(task)
+    case _:           raise ValueError(f"Unknown squad: {squad}")
+```
+
+### Naming Conventions (critical for 156-agent scale)
+```python
+# Agent slugs: {squad}-{role}  (kebab-case, max 40 chars)
+"support-tier1"           ✅
+"sales-cold-outreach-sdr" ✅
+"SupportTier1"            ❌ (not a slug)
+
+# Agent class names: {Squad}{Role}Agent  (PascalCase)
+class SupportTier1Agent(AIAgent): ...        ✅
+class SalesColdOutreachSDRAgent(AIAgent): ... ✅
+
+# Squad directory names: squad_{name}  (snake_case)
+squad_support/  ✅
+support/        ❌
+
+# Module files: {agent_slug_underscored}.py
+squad_support/support_tier1.py         ✅
+squad_support/SupportTier1.py          ❌
 ```
 
 ### Imports (strict order)
@@ -211,221 +470,148 @@ match ticket_type:
 from __future__ import annotations
 
 # 2. Standard library
-import os
-import json
-import logging
+import os, json, logging
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Optional
+from abc import ABC, abstractmethod
 
 # 3. Third-party
 import requests
 from dotenv import load_dotenv
 
-# 4. Local
-from config import OLLAMA_URL, DEFAULT_MODEL, LOG_DIR
-from logger import get_logger
-```
-
-### Constants & Configuration
-```python
-# ALL config lives in config.py — never hardcode in class files
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
-DEFAULT_MODEL = os.getenv("GHOST_MODEL", "deepseek-r1:7b")
-OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
-LOG_DIR = Path(os.getenv("GHOST_LOG_DIR", "logs"))
-MOCK_AI = os.getenv("GHOST_MOCK_AI", "false").lower() == "true"
-```
-
-### Naming Conventions
-| Type | Convention | Example |
-|---|---|---|
-| Classes | PascalCase | `AICustomerSupport` |
-| Methods / Functions | snake_case | `handle_ticket` |
-| Variables | snake_case | `customer_message` |
-| Constants | UPPER_SNAKE_CASE | `OLLAMA_TIMEOUT` |
-| Private methods | `_snake_case` | `_call_ollama` |
-| Test classes | `TestClassName` | `TestCustomerSupport` |
-| Test functions | `test_description` | `test_handle_ticket_escalation` |
-
-### Docstrings (Google style — mandatory for all public methods)
-```python
-def handle_ticket(self, customer_message: str, customer_email: str | None = None) -> str:
-    """Handle a customer support ticket and return an AI-generated response.
-    
-    Checks against the knowledge base, generates a contextual reply, and
-    auto-escalates if confidence is below threshold.
-    
-    Args:
-        customer_message: The raw customer support message.
-        customer_email: Optional email address for escalation routing.
-        
-    Returns:
-        A string containing the AI-generated response or escalation notice.
-        
-    Raises:
-        OllamaConnectionError: If Ollama service is unreachable.
-    """
-```
-
-### Error Handling Pattern
-```python
-def _call_ollama(self, prompt: str, model: str | None = None) -> str:
-    """Call Ollama AI with retry logic and structured error handling."""
-    target_model = model or self.model
-    
-    # Mock mode for testing without Ollama
-    if MOCK_AI:
-        return f"[MOCK] AI response for: {prompt[:80]}..."
-    
-    for attempt in range(1, MAX_RETRIES + 1):
-        try:
-            response = requests.post(
-                OLLAMA_URL,
-                json={
-                    "model": target_model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {"temperature": 0.7, "num_predict": 512},
-                },
-                timeout=OLLAMA_TIMEOUT,
-            )
-            response.raise_for_status()
-            return response.json()["response"].strip()
-            
-        except requests.exceptions.ConnectionError:
-            if attempt == MAX_RETRIES:
-                return "ERROR: Ollama not running. Start with: ollama serve"
-            time.sleep(2 ** attempt)  # Exponential backoff
-            
-        except requests.exceptions.Timeout:
-            return f"ERROR: Ollama timeout after {OLLAMA_TIMEOUT}s"
-            
-        except KeyError:
-            return "ERROR: Unexpected Ollama response format"
-            
-        except Exception as e:
-            return f"ERROR: {type(e).__name__}: {e}"
-    
-    return "ERROR: Max retries exceeded"
+# 4. Local — core first, then integrations
+from ghostagency.core.config import DEFAULT_MODEL, LOG_DIR
+from ghostagency.core.logger import get_logger
+from ghostagency.core.exceptions import LLMConnectionError
+from ghostagency.integrations.nim_client import NIMClient
 ```
 
 ---
 
 ## 🧪 TESTING RULES
 
-### Test File Structure (every test file must follow this)
+### Test File Structure
 ```python
-"""Tests for AICustomerSupport employee class."""
+"""Tests for SupportTier1Agent — squad_support."""
 import pytest
-from unittest.mock import patch, Mock, MagicMock
-from ghost_agency_employees import AICustomerSupport
+from unittest.mock import patch, Mock
+from ghostagency.agents.squad_support.support_tier1 import SupportTier1Agent
 
-
-# ── Fixtures ────────────────────────────────────────────────────────────────
 
 @pytest.fixture
-def support_agent():
-    """Returns a basic AICustomerSupport instance with mock KB."""
-    return AICustomerSupport(
-        client_name="TestCo",
-        knowledge_base_path="tests/fixtures/support_kb",
-        escalation_email=None,
-    )
+def agent():
+    return SupportTier1Agent(client_name="TestCo", knowledge_base_path=None)
 
 @pytest.fixture
-def mock_ollama_response():
-    """Patches requests.post to return a canned Ollama response."""
-    with patch("requests.post") as mock_post:
-        mock = Mock()
-        mock.status_code = 200
-        mock.json.return_value = {"response": "Your order ships in 3-5 business days."}
-        mock_post.return_value = mock
-        yield mock_post
+def mock_nim():
+    """Patches NIMClient.complete to return a canned response."""
+    with patch("ghostagency.integrations.nim_client.NIMClient.complete") as m:
+        m.return_value = "Your order ships in 3-5 business days."
+        yield m
 
 
-# ── Tests ────────────────────────────────────────────────────────────────────
+class TestSupportTier1Agent:
 
-class TestCustomerSupport:
-    
-    def test_handle_ticket_returns_string(self, support_agent, mock_ollama_response):
-        """Primary action must always return a string."""
-        result = support_agent.handle_ticket("Where is my order?")
-        assert isinstance(result, str)
-        assert len(result) > 0
-    
-    def test_handle_ticket_uses_knowledge_base(self, support_agent, mock_ollama_response):
-        """Knowledge base content should be present in the prompt sent to Ollama."""
-        support_agent.handle_ticket("What's your return policy?")
-        call_args = mock_ollama_response.call_args
-        prompt_sent = call_args[1]["json"]["prompt"]
-        assert "return" in prompt_sent.lower() or "policy" in prompt_sent.lower()
-    
-    def test_escalation_triggered_for_complex_issues(self, support_agent, mock_ollama_response):
-        """Issues matching escalation keywords should trigger human escalation."""
-        mock_ollama_response.return_value.json.return_value = {
-            "response": "I need to escalate this to a human agent."
-        }
-        result = support_agent.handle_ticket("I want to sue your company")
-        assert any(kw in result.lower() for kw in ["escalat", "human", "specialist"])
-    
-    def test_connection_error_returns_graceful_message(self, support_agent):
-        """Ollama connection failure must return a user-safe error string."""
-        with patch("requests.post", side_effect=ConnectionError("refused")):
-            result = support_agent.handle_ticket("Hello")
-        assert "ERROR" in result
-        assert "ollama" in result.lower()
-    
-    def test_logs_are_written_on_interaction(self, support_agent, mock_ollama_response, tmp_path):
-        """Every interaction must produce a log entry."""
-        support_agent.log_dir = tmp_path
-        support_agent.handle_ticket("Test message")
-        log_files = list(tmp_path.glob("**/*.json"))
-        assert len(log_files) >= 1
+    def test_primary_action_returns_string(self, agent, mock_nim):
+        result = agent.primary_action("Where is my order?")
+        assert isinstance(result, str) and len(result) > 0
+
+    def test_agent_slug_is_registered(self):
+        from ghostagency.core.agent_registry import AGENT_REGISTRY
+        assert "support-tier1" in AGENT_REGISTRY
+
+    def test_nim_timeout_falls_back_gracefully(self, agent):
+        from ghostagency.core.exceptions import LLMTimeoutError
+        with patch("ghostagency.integrations.nim_client.NIMClient.complete",
+                   side_effect=LLMTimeoutError("timeout")):
+            result = agent.primary_action("Hello")
+        assert isinstance(result, str)  # Must not raise
+
+    def test_logs_written_on_interaction(self, agent, mock_nim, tmp_path):
+        agent.logger.log_dir = tmp_path
+        agent.primary_action("Test")
+        assert len(list(tmp_path.glob("**/*.json"))) >= 1
 ```
 
-### Test Coverage Requirements
-- Minimum coverage: **80%** for all non-demo files
-- Every `primary_action()` method: **100%** coverage
-- `_call_ollama()`: must have tests for success, timeout, connection error, and bad response
+### Registry Integrity Test (run this always)
+```python
+# tests/test_agent_registry.py
+from ghostagency.core.agent_registry import AGENT_REGISTRY, TOTAL_AGENTS
+
+def test_registry_count():
+    assert len(AGENT_REGISTRY) == TOTAL_AGENTS, \
+        f"Expected {TOTAL_AGENTS} agents, got {len(AGENT_REGISTRY)}"
+
+def test_all_agents_inherit_base():
+    from ghostagency.core.base_agent import AIAgent
+    for slug, cls in AGENT_REGISTRY.items():
+        assert issubclass(cls, AIAgent), f"{slug} does not inherit AIAgent"
+
+def test_all_agents_have_required_attributes():
+    required = ["agent_slug", "squad", "display_name", "price_tier"]
+    for slug, cls in AGENT_REGISTRY.items():
+        for attr in required:
+            assert hasattr(cls, attr), f"{slug} missing class attribute: {attr}"
+```
+
+### Coverage Requirements
+- Registry, router, base agent: **100%**
+- Every `primary_action()`: **100%**
+- `_call_llm()`: must test NIM success, NIM timeout, Ollama fallback, mock mode
+- All other non-demo code: **≥ 80%**
 
 ### Mocking Rules
-- **Always** mock `requests.post` in unit tests — never hit real Ollama in CI
-- Use `GHOST_MOCK_AI=true` env var for integration-level smoke tests
-- Never mock file I/O — use `tmp_path` fixture from pytest instead
+- **Always** mock `NIMClient.complete` in unit tests — never hit real NIM in CI
+- **Always** mock `OllamaFallbackClient.complete` as secondary
+- Use `GHOST_MOCK_AI=true` for integration smoke tests
+- Never mock file I/O — use `tmp_path` pytest fixture
 
 ---
 
 ## 🔒 SECURITY & SECRETS
 
 ### Rules (no exceptions)
-1. **Never** hardcode API keys, passwords, or tokens in any `.py` file
-2. **Never** commit `.env` files — only `.env.example` is committed
+1. **Never** hardcode API keys, NIM keys, passwords, or tokens in any `.py` file
+2. **Never** commit `.env` — only `.env.example`
 3. **Always** load secrets via `os.getenv()` with a safe default
-4. **Always** sanitise input before injecting into prompts (strip HTML, truncate to 2000 chars)
+4. **Always** sanitise input before injecting into prompts (strip HTML, truncate at 2000 chars)
 5. **Always** redact emails and phone numbers in log output
+6. **Never** log NIM API keys or full request headers
 
-### `.env.example` template (keep this updated)
+### `.env.example` Template
 ```env
-# Ollama
+# NVIDIA NIM (primary LLM)
+NIM_API_KEY=
+NIM_BASE_URL=https://integrate.api.nvidia.com/v1
+NIM_MODEL=deepseek-ai/deepseek-v3-0324
+NIM_TIMEOUT=60
+
+# Ollama (local fallback — CPU-only)
 OLLAMA_URL=http://localhost:11434/api/generate
 GHOST_MODEL=deepseek-r1:7b
 OLLAMA_TIMEOUT=120
 
-# Logging
+# Agent runtime
+GHOST_MOCK_AI=false
+GHOST_MAX_RETRIES=3
 GHOST_LOG_DIR=logs
 
-# Testing
-GHOST_MOCK_AI=false
-
-# Email (optional — for escalation)
+# Email (escalation)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=
 SMTP_PASS=
 
-# Webhook (optional)
+# Webhook
 ESCALATION_WEBHOOK_URL=
+
+# Gumroad (license validation)
+GUMROAD_PRODUCT_ID=
+GUMROAD_ACCESS_TOKEN=
+
+# Telegram bot (optional)
+TELEGRAM_BOT_TOKEN=
 ```
 
 ---
@@ -434,44 +620,51 @@ ESCALATION_WEBHOOK_URL=
 
 | Metric | Target | Alert Threshold |
 |---|---|---|
-| Ollama response time (p50) | < 8s | > 30s |
-| Ollama response time (p95) | < 20s | > 60s |
-| Ticket handling success rate | > 95% | < 90% |
+| NIM response time (p50) | < 4s | > 15s |
+| NIM response time (p95) | < 10s | > 30s |
+| Ollama fallback (p50) | < 12s | > 45s |
+| primary_action success rate | > 97% | < 92% |
 | Escalation rate | 5–15% | > 30% |
+| Registry load time | < 200ms | > 1s |
 | Log write failure rate | 0% | > 1% |
 
-### Optimisation Patterns
+### Optimisation Patterns (for 156-agent scale)
 ```python
-# Use efficient prompt construction — avoid string concatenation in loops
+# ✅ Cache KB at init, not per-call
+def __init__(self, ...):
+    self.knowledge_base = self._load_kb(knowledge_base_path)  # Once
+
+# ✅ Hard-cap KB injection
 system_prompt = "\n".join([
-    f"You are an AI {self.role} for {self.client_name}.",
-    f"Knowledge base:\n{self.knowledge_base[:3000]}",  # Hard cap KB injection
-    "Respond professionally and concisely. If unsure, say so.",
+    f"You are {self.display_name} for {self.client_name}.",
+    f"KB:\n{self.knowledge_base[:3000]}",
+    "Respond concisely. If unsure, say so.",
 ])
 
-# Cache knowledge base — load once at init, not per-call
-def __init__(self, ...):
-    self.knowledge_base = self._load_knowledge_base(knowledge_base_path)  # Load once
-
-# Manage conversation history size — prevent context overflow
+# ✅ Trim conversation history to prevent context overflow
 MAX_HISTORY_TURNS = 20
 if len(self.conversation_history) > MAX_HISTORY_TURNS * 2:
     self.conversation_history = self.conversation_history[-MAX_HISTORY_TURNS * 2:]
+
+# ✅ Registry is loaded once at import time — never rebuild per request
+# ❌ Don't scan agent dirs at runtime — the registry dict is the source of truth
 ```
 
 ---
 
 ## 🚀 DEPLOYMENT CHECKLIST
 
-Before marking any feature "done", verify:
+Before marking any feature "done":
 
-- [ ] All tests pass: `pytest --tb=short`
-- [ ] Coverage is ≥ 80%: `pytest --cov=ghost_agency_employees`
-- [ ] No lint errors: `flake8 . --max-line-length 100`
-- [ ] Type hints validated: `mypy ghost_agency_employees.py --ignore-missing-imports`
-- [ ] No secrets in code: `grep -r "password\|api_key\|secret" . --include="*.py"`
-- [ ] Demo runs clean: `GHOST_MOCK_AI=true python demo/run_demo.py`
-- [ ] Log files created under `logs/{client_slug}/`
+- [ ] `pytest --tb=short -q` — all tests pass
+- [ ] `pytest --cov=ghostagency` — coverage ≥ 80% globally, 100% on registry + base
+- [ ] `python scripts/validate_registry.py` — confirms exactly 156 agents registered
+- [ ] `flake8 . --max-line-length 100` — no lint errors
+- [ ] `mypy ghostagency/core/ ghostagency/agents/ --ignore-missing-imports` — no type errors
+- [ ] `grep -r "api_key\|password\|secret\|NIM_API_KEY" . --include="*.py"` — no hardcoded secrets
+- [ ] `GHOST_MOCK_AI=true python demo/run_demo.py` — demo runs clean
+- [ ] `python scripts/list_agents.py` — all 156 agents listed with correct squad
+- [ ] Log files created under `logs/{client_slug}/{squad}/{agent_slug}/`
 - [ ] README reflects any new CLI commands or env vars
 
 ---
@@ -480,56 +673,99 @@ Before marking any feature "done", verify:
 
 | Symptom | Diagnosis | Fix |
 |---|---|---|
-| `ERROR: Ollama not running` | Ollama service is down | `ollama serve` in separate terminal |
+| `LLMConnectionError: NIM` | NIM API key missing or wrong | Check `NIM_API_KEY` in `.env` |
+| `LLMTimeoutError` | Prompt too long or NIM overloaded | Reduce KB injection size; retry |
+| `KeyError: agent not found` | Agent slug not in registry | Run `python scripts/validate_registry.py` |
+| `AssertionError: 154 agents, expected 156` | 2 agents not registered | Add missing slugs to `AGENT_REGISTRY` |
+| `ImportError` on squad module | Agent file not created yet | Create the agent file first, then register |
+| `ERROR: Ollama not running` | Ollama fallback not started | `ollama serve` in separate terminal |
 | `ERROR: model not found` | Model not pulled | `ollama pull deepseek-r1:7b` |
-| `ERROR: Ollama timeout` | Model too large for RAM | Switch to `phi3` or `deepseek-r1:7b` |
-| `KeyError: 'response'` | Wrong Ollama API version | `curl http://localhost:11434/api/tags` to verify |
-| Tests fail with `ConnectionRefused` | Tests hitting real Ollama | Add `GHOST_MOCK_AI=true` or add `requests.post` mock |
-| High escalation rate (> 30%) | KB is too thin or missing | Add more content to client knowledge base |
+| Tests fail `ConnectionRefused` | Tests hitting real NIM/Ollama | Add `GHOST_MOCK_AI=true` or mock `NIMClient.complete` |
+| High escalation rate > 30% | KB too thin | Add content to client knowledge base |
+| Registry load > 1s | Too many dynamic imports | Convert squad `__init__.py` to explicit imports |
 | Logs not appearing | Log dir permissions | `mkdir -p logs && chmod 755 logs` |
 
 ---
 
 ## 📏 AGENT DECISION RULES
 
-When you (the AI coding agent) are uncertain, follow these rules in order:
+When you (the AI coding agent) are uncertain, follow these in order:
 
-1. **Structure first** — if a file doesn't exist yet, create it with the skeleton from this document before filling content
-2. **Tests before implementation** — write the test stubs first, then make them pass
-3. **Mock by default** — any new external call (API, SMTP, webhook) must be mockable via env var or dependency injection
-4. **One class, one file** — if a class grows > 400 lines, propose splitting it
-5. **Never break the demo** — `demo/run_demo.py` must always run successfully after any change
-6. **Config not code** — any value that differs between clients goes in `config.py` + `.env`, not hardcoded
-7. **Log everything** — every `primary_action()` call must produce a structured log entry
+1. **Registry first** — if an agent slug isn't in `AGENT_REGISTRY`, it doesn't exist. Check the registry before writing new code.
+2. **Validate count** — after any add/remove, run `validate_registry.py`. Count must be 156.
+3. **Structure first** — create the file skeleton before filling content.
+4. **Tests before implementation** — write test stubs first, then make them pass.
+5. **Mock by default** — any external call (NIM, Ollama, SMTP, webhook) must be mockable via env var or dependency injection.
+6. **One class, one file** — if a class grows > 400 lines, propose splitting it.
+7. **Never break the demo** — `demo/run_demo.py` must always run after any change.
+8. **Config not code** — any value that differs between clients goes in `config.py` + `.env`.
+9. **Log everything** — every `primary_action()` call must produce a structured log entry.
+10. **Squad routing** — new agents must declare `squad` class attribute matching their `squad_*` directory name exactly.
 
 ---
 
 ## 🧩 OPENCODE-SPECIFIC INSTRUCTIONS
 
-### For DeepSeek R1 (reasoning model)
-- When generating complex logic (e.g., escalation routing, KB chunking), emit your reasoning in a `<think>` block before the code
-- For multi-step refactoring tasks, plan all changes before writing a single line
-- Always confirm the full file structure before making edits to avoid orphaned functions
+### Model Selection
+- **DeepSeek V3.1 (NIM)** — default for all coding tasks (fast, accurate)
+- **DeepSeek R1** — use for complex multi-step reasoning: architecture decisions, escalation routing design, registry refactoring
 
-### For DeepSeek V3 (fast coding model)
-- Prefer direct code generation over extended reasoning
+### For DeepSeek V3.1 (fast coding)
+- Prefer direct code generation
 - Use the test file as your spec — write code to pass the tests, not the other way around
+- Generate complete, runnable files — no placeholders like `# TODO: implement`
+
+### For DeepSeek R1 (reasoning tasks)
+- Emit reasoning in a `<think>` block before any code
+- For multi-step refactoring (e.g. migrating all 156 agents to a new base class), plan all changes before writing a single line
+- Confirm the full file structure before editing to avoid orphaned functions
 
 ### Tool Use in opencode
 ```bash
-# Use shell commands to verify your changes before reporting "done"
-python -c "from ghost_agency_employees import AICustomerSupport; print('Import OK')"
-pytest tests/ --tb=short -q
-black --check ghost_agency_employees.py
+# Verify imports before reporting done
+python -c "from ghostagency.core.agent_registry import AGENT_REGISTRY; print(len(AGENT_REGISTRY), 'agents loaded')"
+
+# Run registry validation
+python scripts/validate_registry.py
+
+# Run squad-specific tests
+pytest tests/squads/test_squad_support.py --tb=short -q
+
+# Full quality gate
+black . --line-length 100 && flake8 . --max-line-length 100 && pytest --tb=short -q
 ```
 
 ### File Editing Rules
-- Always read the target file **before** editing it
-- Make one logical change per edit — do not batch unrelated changes
-- After editing, run the relevant test class to confirm nothing regressed
-- When in doubt about scope, ask via a comment: `# AGENT NOTE: need clarification on X`
+- Always **read** the target file before editing it
+- Make **one logical change** per edit — do not batch unrelated changes
+- After editing an agent file, run its squad test class to confirm no regression
+- After editing `agent_registry.py`, always run `validate_registry.py`
+- When in doubt about scope, leave: `# AGENT NOTE: need clarification on X`
+
+### Adding a New Agent (step-by-step)
+```bash
+# 1. Create the agent file
+touch ghostagency/agents/squad_support/support_new_role.py
+
+# 2. Implement the class (inherit AIAgent, set all class attrs)
+
+# 3. Add to squad __init__.py
+echo "from .support_new_role import SupportNewRoleAgent" >> ghostagency/agents/squad_support/__init__.py
+
+# 4. Register in agent_registry.py
+# "support-new-role": SupportNewRoleAgent,
+
+# 5. Validate count
+python scripts/validate_registry.py
+
+# 6. Write tests
+touch tests/squads/test_squad_support.py  # Add test class for new agent
+
+# 7. Run tests
+pytest tests/squads/test_squad_support.py -v
+```
 
 ---
 
-*This file is the single source of truth for all coding agents working on Ghost Agency.*  
-*Last updated: 2025 | Model target: opencode + DeepSeek R1/V3*
+*This file is the single source of truth for all coding agents working on Ghost Agency.*
+*Last updated: 2025 | Scale: 156 agents | Model: opencode + DeepSeek V3.1 via NVIDIA NIM*
