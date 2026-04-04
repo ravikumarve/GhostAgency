@@ -5,11 +5,23 @@ from ghostagency.core.base_agent import AIAgent
 
 # Import agent classes
 from ghostagency.agents.squad_support.support_tier1 import SupportTier1Agent
+from ghostagency.agents.squad_sales.sales_qualification import SalesQualificationAgent
+from ghostagency.agents.squad_content.content_social_media import (
+    ContentSocialMediaAgent,
+)
+from ghostagency.agents.squad_ops.ops_executive_assistant import (
+    OpsExecutiveAssistantAgent,
+)
 
 AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     # Support Squad
     "support-tier1": SupportTier1Agent,
-    # More agents will be added here as they are implemented
+    # Sales Squad
+    "sales-qualification": SalesQualificationAgent,
+    # Content Squad
+    "content-social-media": ContentSocialMediaAgent,
+    # Operations Squad
+    "ops-executive-assistant": OpsExecutiveAssistantAgent,
 }
 
 TOTAL_AGENTS = 156
