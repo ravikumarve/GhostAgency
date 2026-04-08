@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ghost Agency{% endblock %}</title>
+    
+    <!-- Archivo Black, Work Sans, Space Mono, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/static/css/brutalist.css">
+    <script src="/static/js/brutalist.js" defer></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="header-grid">
+            <h1 class="logo">GHOST AGENCY</h1>
+            <nav>
+                <a href="/" class="nav-link">DASHBOARD</a>
+                <a href="/agents" class="nav-link">AGENTS</a>
+                <a href="/clients" class="nav-link">CLIENTS</a>
+                <a href="/stats" class="nav-link">STATS</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <span>156 AGENTS ONLINE</span>
+            <div>
+                <span>{% block footer_extra %}{% endblock %}</span>
+                <button class="btn" onclick="toggleDarkMode()" style="margin-left: 1rem;">DARK MODE</button>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

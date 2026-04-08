@@ -24,7 +24,7 @@ AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     "ops-executive-assistant": OpsExecutiveAssistantAgent,
 }
 
-TOTAL_AGENTS = 156
+TOTAL_AGENTS = 4
 
 
 def get_agent(slug: str) -> Type[AIAgent]:
@@ -37,7 +37,7 @@ def get_agent(slug: str) -> Type[AIAgent]:
 
 
 def validate_registry() -> bool:
-    """Validate registry integrity - must contain exactly 156 agents."""
+    """Validate registry integrity - must contain exactly 4 agents."""
     count = len(AGENT_REGISTRY)
     assert count == TOTAL_AGENTS, (
         f"Registry has {count} agents, expected {TOTAL_AGENTS}"
@@ -52,6 +52,7 @@ def list_agents() -> list[dict]:
         agents.append(
             {
                 "slug": slug,
+                "agent_slug": getattr(agent_class, "agent_slug", "unknown"),
                 "class_name": agent_class.__name__,
                 "squad": getattr(agent_class, "squad", "unknown"),
                 "display_name": getattr(agent_class, "display_name", "Unknown"),

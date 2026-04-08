@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Ghost Agency{% endblock %}
+
+{% block content %}
+<div class="grid grid-3">
+    <!-- Agent Status Card -->
+    <div class="card">
+        <div class="card-header">AGENT STATUS</div>
+        <div class="data-grid">
+            <span class="data-label">TOTAL:</span>
+            <span class="data-value">{{ total_agents }}</span>
+            <span class="data-label">ONLINE:</span>
+            <span class="status status-online">{{ online_agents }}</span>
+            <span class="data-label">OFFLINE:</span>
+            <span class="status status-offline">{{ offline_agents }}</span>
+        </div>
+    </div>
+
+    <!-- Squad Overview Card -->
+    <div class="card">
+        <div class="card-header">SQUAD OVERVIEW</div>
+        <div class="data-grid">
+            {% for squad in squads %}
+            <span class="data-label">{{ squad.name|upper }}:</span>
+            <span class="data-value">{{ squad.count }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Performance Card -->
+    <div class="card">
+        <div class="card-header">PERFORMANCE</div>
+        <div class="data-grid">
+            <span class="data-label">RESPONSE TIME:</span>
+            <span class="data-value">{{ "%.2f"|format(performance.avg_response_time) }}s</span>
+            <span class="data-label">SUCCESS RATE:</span>
+            <span class="data-value">{{ "%.1f"|format(performance.success_rate * 100) }}%</span>
+            <span class="data-label">ESCALATIONS:</span>
+            <span class="data-value">{{ performance.escalations }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-2 mt-2">
+    <!-- Recent Activity -->
+    <div class="card">
+        <div class="card-header">RECENT ACTIVITY</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>AGENT</th>
+                    <th>ACTION</th>
+                    <th>TIME</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in recent_activity %}
+                <tr>
+                    <td>{{ activity.agent }}</td>
+                    <td>{{ activity.action }}</td>
+                    <td>{{ activity.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- System Health -->
+    <div class="card">
+        <div class="card-header">SYSTEM HEALTH</div>
+        <div class="data-grid">
+            <span class="data-label">NIM CONNECTION:</span>
+            <span class="status status-online">OK</span>
+            <span class="data-label">OLLAMA FALLBACK:</span>
+            <span class="status status-online">READY</span>
+            <span class="data-label">DATABASE:</span>
+            <span class="status status-online">CONNECTED</span>
+            <span class="data-label">LOG FILES:</span>
+            <span class="status status-warning">2.1GB</span>
+        </div>
+        <div class="mt-1">
+            <button class="btn btn-blue">VIEW LOGS</button>
+            <button class="btn btn-red">CLEANUP</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

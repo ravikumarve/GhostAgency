@@ -93,7 +93,11 @@ def main():
     else:
         print("⚠️  Running with REAL LLM calls - ensure NVIDIA NIM/Ollama is configured")
 
-    print(f"\nTotal agents registered: 1 (of 156 target)")
+    from ghostagency.core.agent_registry import AGENT_REGISTRY, TOTAL_AGENTS
+
+    print(
+        f"\nTotal agents registered: {len(AGENT_REGISTRY)} (of {TOTAL_AGENTS} target)"
+    )
 
     try:
         demo_support_tier1()

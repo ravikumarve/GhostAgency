@@ -1,0 +1,326 @@
+/* BRUTALIST CSS - Ghost Agency Dashboard */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --white: #F5F5F5;
+    --black: #000000;
+    --blue: #0000FF;
+    --red: #FF0000;
+}
+
+body {
+    background-color: var(--white);
+    color: var(--black);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.2;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* HEADER */
+header {
+    border-bottom: 2px solid var(--black);
+    padding: 1rem;
+    background: var(--white);
+}
+
+.header-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+}
+
+nav {
+    display: flex;
+    gap: 2rem;
+    justify-self: end;
+}
+
+.nav-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--black);
+    border: 2px solid var(--black);
+    padding: 0.5rem 1rem;
+    background: var(--white);
+    transition: all 0.1s;
+}
+
+.nav-link:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+/* MAIN CONTENT */
+main {
+    padding: 2rem;
+}
+
+/* GRID SYSTEM */
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* CARDS */
+.card {
+    border: 2px solid var(--black);
+    padding: 1.5rem;
+    background: var(--white);
+    min-height: 200px;
+}
+
+.card-header {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--black);
+    padding-bottom: 0.5rem;
+}
+
+/* STATUS INDICATORS */
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border: 2px solid var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+}
+
+.status-online {
+    background: var(--blue);
+    color: var(--white);
+}
+
+.status-offline {
+    background: var(--red);
+    color: var(--white);
+}
+
+.status-warning {
+    background: var(--white);
+    color: var(--black);
+}
+
+/* DATA DISPLAY */
+.data-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.data-label {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.data-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+
+/* BUTTONS */
+.btn {
+    border: 2px solid var(--black);
+    padding: 0.5rem 1rem;
+    background: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.btn:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-blue {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: var(--white);
+}
+
+.btn-blue:hover {
+    background: var(--black);
+    border-color: var(--black);
+}
+
+.btn-red {
+    border-color: var(--red);
+    background: var(--red);
+    color: var(--white);
+}
+
+.btn-red:hover {
+    background: var(--black);
+    border-color: var(--black);
+}
+
+/* FORMS */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    border: 2px solid var(--black);
+    padding: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    background: var(--white);
+}
+
+.form-input:focus {
+    outline: none;
+    background: var(--black);
+    color: var(--white);
+}
+
+/* TABLES */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 2px solid var(--black);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.table th {
+    font-family: 'Archivo Black', sans-serif;
+    background: var(--black);
+    color: var(--white);
+}
+
+.table td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+
+.table tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* FOOTER */
+footer {
+    border-top: 2px solid var(--black);
+    padding: 1rem;
+    background: var(--white);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2rem;
+}
+
+footer span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+}
+
+/* DARK MODE */
+.dark-mode {
+    --white: #000000;
+    --black: #F5F5F5;
+}
+
+.dark-mode body {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.dark-mode .card,
+.dark-mode .nav-link,
+.dark-mode .btn,
+.dark-mode .form-input {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--black);
+}
+
+.dark-mode .nav-link:hover,
+.dark-mode .btn:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.dark-mode .table th {
+    background: var(--black);
+    color: var(--white);
+}
+
+/* UTILITY CLASSES */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+
+.p-1 { padding: 1rem; }
+.p-2 { padding: 2rem; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .header-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    nav {
+        justify-self: start;
+        flex-wrap: wrap;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    main {
+        padding: 1rem;
+    }
+}
