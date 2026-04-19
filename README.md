@@ -155,10 +155,11 @@ PYTHONPATH=. python ghostagency/scripts/validate_registry.py
 ## ⚡ Quick Install
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/ravikumarve/GhostAgency/main/install.sh | bash
+# After purchasing on Gumroad, clone the repo and run:
+bash install.sh
 ```
 
-This one-liner checks Python 3.10+, creates a virtual environment, installs dependencies, and validates the agent registry. Safe to re-run.
+> **Note:** The one-liner `curl -sSL https://raw.githubusercontent.com/ravikumarve/GhostAgency/main/install.sh | bash` will work once the repo is made public. For private/Gumroad distribution, clone first then run `bash install.sh`.
 
 ---
 
