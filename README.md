@@ -155,7 +155,7 @@ PYTHONPATH=. python ghostagency/scripts/validate_registry.py
 ## ⚡ Quick Install
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/ravikumarve/ghost-agency/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/ravikumarve/GhostAgency/main/install.sh | bash
 ```
 
 This one-liner checks Python 3.10+, creates a virtual environment, installs dependencies, and validates the agent registry. Safe to re-run.
