@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Optional, Dict, Any
 
 from ghostagency.core.base_agent import AIAgent
@@ -47,13 +48,14 @@ Format as structured analysis:"""
             return response
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties analyzing this lead. Please try again later."
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "analyzing this lead. Please try again later."
+            )
             self._log_interaction("qualify_lead_error", str(lead_info), str(e))
             return error_response
 
-    def draft_followup_email(
-        self, lead_name: str, lead_company: str, context: str = ""
-    ) -> str:
+    def draft_followup_email(self, lead_name: str, lead_company: str, context: str = "") -> str:
         """Draft a personalized follow-up email."""
 
         prompt = f"""Write a brief, personalized follow-up email to:
@@ -78,10 +80,11 @@ Email:"""
             return email
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties drafting the email. Please try again later."
-            self._log_interaction(
-                "draft_email_error", f"{lead_name}@{lead_company}", str(e)
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "drafting the email. Please try again later."
             )
+            self._log_interaction("draft_email_error", f"{lead_name}@{lead_company}", str(e))
             return error_response
 
     def get_role_prompt(self) -> str:

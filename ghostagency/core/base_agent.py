@@ -1,11 +1,11 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Optional
 import os
 
-from ghostagency.core.config import DEFAULT_MODEL, LOG_DIR
+from ghostagency.core.config import DEFAULT_MODEL
 from ghostagency.core.logger import get_logger
-from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
+from ghostagency.core.exceptions import LLMConnectionError
 from ghostagency.integrations.nim_client import NIMClient
 from ghostagency.integrations.ollama_fallback import OllamaFallbackClient
 
@@ -56,7 +56,7 @@ class AIAgent(ABC):
         except LLMConnectionError:
             # Fallback to Ollama (CPU-only machines)
             fallback = OllamaFallbackClient()
-            return fallback.complete(prompt, model="phi3")
+            return fallback.complete(prompt, model="phi3:mini")
 
     def _log_interaction(self, action: str, input: str, output: str) -> None:
         """Shared structured JSON logger. Never override."""

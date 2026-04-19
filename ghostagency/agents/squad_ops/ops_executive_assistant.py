@@ -38,15 +38,11 @@ class OpsExecutiveAssistantAgent(AIAgent):
         elif task_type == "summarize_meeting":
             return self.summarize_meeting(kwargs.get("meeting_notes", ""))
         elif task_type == "research_topic":
-            return self.research_topic(
-                kwargs.get("topic", ""), kwargs.get("depth", "brief")
-            )
+            return self.research_topic(kwargs.get("topic", ""), kwargs.get("depth", "brief"))
         else:
             return f"I'm sorry, I don't support the task type '{task_type}' yet."
 
-    def draft_email(
-        self, recipient: str, purpose: str, key_points: List[str] = []
-    ) -> str:
+    def draft_email(self, recipient: str, purpose: str, key_points: List[str] = []) -> str:
         """Draft a professional email."""
 
         prompt = f"""Draft an email to: {recipient}
@@ -67,10 +63,11 @@ Email:"""
             return email
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties drafting the email. Please try again later."
-            self._log_interaction(
-                "draft_email_error", f"{recipient}: {purpose}", str(e)
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "drafting the email. Please try again later."
             )
+            self._log_interaction("draft_email_error", f"{recipient}: {purpose}", str(e))
             return error_response
 
     def summarize_meeting(self, meeting_notes: str) -> str:
@@ -93,10 +90,11 @@ Summary:"""
             return summary
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties summarizing the meeting notes. Please try again later."
-            self._log_interaction(
-                "summarize_meeting_error", meeting_notes[:100], str(e)
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "summarizing the meeting notes. Please try again later."
             )
+            self._log_interaction("summarize_meeting_error", meeting_notes[:100], str(e))
             return error_response
 
     def research_topic(self, topic: str, depth: str = "brief") -> str:
@@ -119,7 +117,10 @@ Research summary:"""
             return research
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties researching the topic. Please try again later."
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "researching the topic. Please try again later."
+            )
             self._log_interaction("research_topic_error", topic, str(e))
             return error_response
 

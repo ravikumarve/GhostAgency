@@ -42,7 +42,7 @@ Your profit margin:     95–99%
 ### 1. 🎥 Watch the Demo
 ```bash
 # Just run this one command to see it working
-GHOST_MOCK_AI=true python demo/run_demo.py
+PYTHONPATH=. GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py
 ```
 
 ### 2. 💰 Calculate Your Potential Income
@@ -67,29 +67,31 @@ Start with one of these easy-to-sell roles:
 
 ---
 
-## 🏢 Meet Your AI Workforce (156 Specialized Employees)
+## 🏢 Meet Your AI Workforce (6 Specialized Employees - Growing Daily!)
 
 | Department | 👥 Employee Count | 💵 Monthly Price | What They Do |
 |------------|------------------|------------------|-------------|
-| **🤝 Support** | 18 agents | $600–900 | Handle tickets, billing, technical help |
-| **📈 Sales** | 20 agents | $900–1,500 | Qualify leads, cold outreach, deal strategy |
-| **📱 Content** | 22 agents | $500–800 | Social media, blog writing, SEO optimization |
-| **⚙️ Operations** | 16 agents | $1,200–2,000 | Executive assistance, scheduling, projects |
-| **📊 Data** | 18 agents | $800–1,400 | Research, analytics, reporting, insights |
-| **💻 Development** | 20 agents | $1,000–1,800 | Code review, technical support, QA testing |
-| **💰 Finance** | 14 agents | $700–1,200 | Invoicing, expense tracking, bookkeeping |
-| **👥 HR** | 14 agents | $600–1,000 | Recruitment, onboarding, employee engagement |
-| **⚖️ Legal** | 10 agents | $1,500–2,500 | Contract review, compliance, NDA management |
-| **🎨 Custom** | 4 agents | Custom pricing | Client-specific specialized agents |
+| **🤝 Support** | 3 agents | $600–900 | Handle tickets, billing, technical help |
+| **📈 Sales** | 1 agent | $900–1,500 | Qualify leads, cold outreach, deal strategy |
+| **📱 Content** | 1 agent | $500–800 | Social media, blog writing, SEO optimization |
+| **⚙️ Operations** | 1 agent | $1,200–2,000 | Executive assistance, scheduling, projects |
+| **📊 Data** | 0 agents | Coming Soon | Research, analytics, reporting, insights |
+| **💻 Development** | 0 agents | Coming Soon | Code review, technical support, QA testing |
+| **💰 Finance** | 0 agents | Coming Soon | Invoicing, expense tracking, bookkeeping |
+| **👥 HR** | 0 agents | Coming Soon | Recruitment, onboarding, employee engagement |
+| **⚖️ Legal** | 0 agents | Coming Soon | Contract review, compliance, NDA management |
+| **🎨 Custom** | 0 agents | Custom pricing | Client-specific specialized agents |
 
-**Run this to see all employees:** `python scripts/list_agents.py`
+**Run this to see current employees:** `PYTHONPATH=. python ghostagency/scripts/list_agents.py`
+
+> 🚀 **We're growing fast!** New agents added weekly based on client demand.
 
 ---
 
 ## ⚡ Quick Start Guide (10 Minutes to Your First AI Employee)
 
 ### 🎯 For Complete Beginners (No Tech Experience)
-1. **Watch the demo**: `GHOST_MOCK_AI=true python demo/run_demo.py`
+1. **Watch the demo**: `PYTHONPATH=. GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py`
 2. **Pick one AI employee** to start with (Support is easiest)
 3. **Find one client** who needs help with customer support
 4. **Charge $800/month** - they'll save thousands vs hiring humans
@@ -130,23 +132,33 @@ cp .env.example .env
 #### 4. Run Your First AI Employee
 ```bash
 # With NVIDIA NIM (best performance)
-python demo/run_demo.py
+PYTHONPATH=. python ghostagency/demo/run_demo.py
 
 # With Ollama (free, runs locally)
-OLLAMA_URL=http://localhost:11434/api/generate python demo/run_demo.py
+OLLAMA_URL=http://localhost:11434/api/generate PYTHONPATH=. python ghostagency/demo/run_demo.py
 
 # Mock mode (see how it works without AI calls)
-GHOST_MOCK_AI=true python demo/run_demo.py
+PYTHONPATH=. GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py
 ```
 
 #### 5. Validate Everything Works
 ```bash
 # List all AI employees
-python scripts/list_agents.py
+PYTHONPATH=. python ghostagency/scripts/list_agents.py
 
 # Check system health
-python scripts/validate_registry.py
+PYTHONPATH=. python ghostagency/scripts/validate_registry.py
 ```
+
+---
+
+## ⚡ Quick Install
+
+```bash
+curl -sSL https://raw.githubusercontent.com/ravikumarve/ghost-agency/main/install.sh | bash
+```
+
+This one-liner checks Python 3.10+, creates a virtual environment, installs dependencies, and validates the agent registry. Safe to re-run.
 
 ---
 
@@ -187,7 +199,7 @@ monthly_profit = monthly_revenue - monthly_expenses  # $7,920
 GhostAgency/
 ├── ghostagency/                 # Main package
 │   ├── core/                    # Core infrastructure
-│   ├── agents/                  # 156 AI employee modules
+│   ├── agents/                  # AI employee modules (6+ and growing)
 │   ├── kb/                      # Knowledge base system
 │   └── integrations/            # Third-party integrations
 ├── api/                         # REST API layer
@@ -204,7 +216,7 @@ Client Request → Agent Registry → AI Employee → Knowledge Base → LLM →
 ```
 
 **Key Components:**
-- **Agent Registry**: Maps 156 employees to their capabilities
+- **Agent Registry**: Maps employees to their capabilities (scales to 156+)
 - **Knowledge Base Loader**: Client-specific information and training
 - **LLM Orchestrator**: NVIDIA NIM (primary) + Ollama (fallback)
 - **Structured Logger**: Automatic logging for every interaction
@@ -247,44 +259,22 @@ pytest --cov=ghostagency --cov-report=term-missing
 
 ### ✅ Quality Standards
 - **100% test coverage** on core components
-- **≥80% coverage** on all other code
+- **≥80% coverage** on all other code (currently 47% - improving daily)
 - **Zero hardcoded secrets** - everything in `.env`
 - **Automatic logging** of every AI interaction
-- **Regular registry validation** (must have exactly 156 agents)
+- **Regular registry validation** (ensures agent integrity)
 
 ---
 
 ## 🚀 Deployment Guide
 
-### 📦 Single Client Deployment
+### 📦 Production Deployment
 ```bash
-# 1. Create client knowledge folder
-mkdir -p kb/clients/acme_corp/
-# Add client's PDFs, manuals, FAQs here
-
-# 2. Set client environment
-CLIENT_NAME="Acme Corp" \
-KB_PATH="kb/clients/acme_corp/" \
-python ghost_agency_employees.py
+# Start the FastAPI server
+uvicorn ghostagency.api.main:app --host 0.0.0.0 --port 8000
 ```
 
-### 🌐 Multi-Client Deployment
-Use **systemd** or **supervisord** to run multiple clients on one server:
-
-```ini
-# Example systemd service for each client
-[Unit]
-Description=Ghost Agency - Acme Corp
-
-[Service]
-Environment=CLIENT_NAME="Acme Corp"
-Environment=KB_PATH="kb/clients/acme_corp/"
-WorkingDirectory=/opt/ghost-agency
-ExecStart=/opt/ghost-agency/.venv/bin/python ghost_agency_employees.py
-
-[Install]
-WantedBy=multi-user.target
-```
+For multi-client setups, run one instance per client with separate `.env` files, or use a reverse proxy (nginx/caddy) to route by domain.
 
 ---
 
@@ -312,16 +302,16 @@ class SupportNewRoleAgent(AIAgent):
 
 ### 📋 Registry Management
 
-The system must always have exactly **156 AI employees**:
+The system is designed to scale to **156+ AI employees** and currently has 6:
 
 ```bash
 # List all employees
-python scripts/list_agents.py
+PYTHONPATH=. python ghostagency/scripts/list_agents.py
 
 # Validate registry integrity
-python scripts/validate_registry.py
+PYTHONPATH=. python ghostagency/scripts/validate_registry.py
 
-# Expected output: "Registry validated: 156 agents found"
+# Expected output: "Registry validated: 6 agents found"
 ```
 
 ---
@@ -333,7 +323,7 @@ python scripts/validate_registry.py
 **"NIM Connection Error"**
 ```bash
 # Check your NVIDIA NIM API key
-python -c "from ghostagency.integrations.nim_client import NIMClient; c = NIMClient(); print(c.ping())"
+PYTHONPATH=. python -c "from ghostagency.integrations.nim_client import NIMClient; c = NIMClient(); print(c.ping())"
 ```
 
 **"Ollama not working"**
@@ -348,16 +338,16 @@ curl http://localhost:11434/api/tags
 **"Employee not found"**
 ```bash
 # List all registered employees
-python scripts/list_agents.py
+PYTHONPATH=. python ghostagency/scripts/list_agents.py
 
 # Validate registry
-python scripts/validate_registry.py
+PYTHONPATH=. python ghostagency/scripts/validate_registry.py
 ```
 
 ### 📞 Getting Help
 
-1. **Check the demo**: `GHOST_MOCK_AI=true python demo/run_demo.py`
-2. **Validate registry**: `python scripts/validate_registry.py`
+1. **Check the demo**: `PYTHONPATH=. GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py`
+2. **Validate registry**: `PYTHONPATH=. python ghostagency/scripts/validate_registry.py`
 3. **Check logs**: Look in `logs/{client_name}/` for detailed error information
 4. **Run tests**: `pytest --tb=short -q` to identify issues
 
@@ -375,11 +365,11 @@ python scripts/validate_registry.py
 ## 🎯 Current Status
 
 **✅ Phase 1 (Core Infrastructure)**: Completed  
-**🤖 AI Employees Ready**: 1/156 (Support Tier 1)  
-**🧪 Test Coverage**: 100% on core components  
+**🤖 AI Employees Ready**: 6/156 (Multiple squads) - **New agents added weekly!**  
+**🧪 Test Coverage**: 100% on core components + 47% overall (improving daily)  
 **🚀 Production Ready**: NVIDIA NIM + Ollama fallback
 
-**🔜 Next Phase**: Migrating remaining 3 existing employees to the new system
+**🔜 Next Phase**: Expanding based on client demand - tell us what you need!
 
 ---
 
@@ -400,6 +390,4 @@ python scripts/validate_registry.py
 
 ---
 
-**Ghost Agency** — Turn AI into your invisible workforce. Build once, sell repeatedly, keep 95%.
-
-*"The most profitable business model I've seen in years." - Early Tester*
+**Ghost Agency** — Turn AI into your invisible workforce. Start with 6 proven agents, expand as you grow.

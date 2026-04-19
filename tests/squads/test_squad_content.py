@@ -1,7 +1,7 @@
 """Tests for ContentSocialMediaAgent — squad_content."""
 
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from ghostagency.agents.squad_content.content_social_media import (
     ContentSocialMediaAgent,
@@ -18,7 +18,9 @@ def agent():
 def mock_nim():
     """Patch NIMClient.complete to return a canned response."""
     with patch("ghostagency.integrations.nim_client.NIMClient.complete") as m:
-        m.return_value = "Exciting news! Our new AI platform is transforming businesses. #AI #Innovation"
+        m.return_value = (
+            "Exciting news! Our new AI platform is transforming businesses. #AI #Innovation"
+        )
         yield m
 
 

@@ -1,7 +1,7 @@
 """Tests for SalesQualificationAgent — squad_sales."""
 
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from ghostagency.agents.squad_sales.sales_qualification import SalesQualificationAgent
 
@@ -18,7 +18,10 @@ def agent():
 def mock_nim():
     """Patch NIMClient.complete to return a canned response."""
     with patch("ghostagency.integrations.nim_client.NIMClient.complete") as m:
-        m.return_value = "Qualification score: 8/10. Positive: Strong interest in AI. Next action: Schedule demo."
+        m.return_value = (
+            "Qualification score: 8/10. "
+            "Positive: Strong interest in AI. Next action: Schedule demo."
+        )
         yield m
 
 

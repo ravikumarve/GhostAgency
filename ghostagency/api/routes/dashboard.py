@@ -1,53 +1,12 @@
 from __future__ import annotations
+
 from fastapi import APIRouter, Request
-from pathlib import Path
-import json
 from typing import Any
+
 from ghostagency.core.agent_registry import AGENT_REGISTRY, list_agents
 from ghostagency.core.templates import shared_templates as templates
 
 router = APIRouter(tags=["dashboard"])
-
-# Use shared templates object - no need to create a new one
-
-# Mock data for demonstration - replace with real data from your system
-MOCK_AGENTS = [
-    {
-        "slug": "support-tier1",
-        "display_name": "Support Tier 1",
-        "squad": "support",
-        "price_tier": "$600/mo",
-        "status": "online",
-    },
-    {
-        "slug": "support-tier2",
-        "display_name": "Support Tier 2",
-        "squad": "support",
-        "price_tier": "$800/mo",
-        "status": "online",
-    },
-    {
-        "slug": "sales-qualification",
-        "display_name": "Sales Qualification",
-        "squad": "sales",
-        "price_tier": "$900/mo",
-        "status": "online",
-    },
-    {
-        "slug": "content-social-media",
-        "display_name": "Social Media",
-        "squad": "content",
-        "price_tier": "$500/mo",
-        "status": "offline",
-    },
-    {
-        "slug": "ops-executive-assistant",
-        "display_name": "Executive Assistant",
-        "squad": "ops",
-        "price_tier": "$1200/mo",
-        "status": "online",
-    },
-]
 
 MOCK_CLIENTS = [
     {
@@ -102,18 +61,13 @@ def get_real_agent_data() -> list[dict]:
     return agents
 
 
-MOCK_SQUADS = [
-    {"name": "support", "count": 18},
-    {"name": "sales", "count": 20},
-    {"name": "content", "count": 22},
-    {"name": "ops", "count": 16},
-    {"name": "data", "count": 18},
-    {"name": "dev", "count": 20},
-    {"name": "finance", "count": 14},
-    {"name": "hr", "count": 14},
-    {"name": "legal", "count": 10},
-    {"name": "custom", "count": 4},
-]
+def get_squad_data() -> list[dict]:
+    """Derive squad list with counts from the real agent registry."""
+    squad_counts: dict[str, int] = {}
+    for agent_class in AGENT_REGISTRY.values():
+        squad = getattr(agent_class, "squad", "unknown")
+        squad_counts[squad] = squad_counts.get(squad, 0) + 1
+    return [{"name": name, "count": count} for name, count in sorted(squad_counts.items())]
 
 
 @router.get("/")
@@ -125,7 +79,7 @@ async def dashboard(request: Request):
         "total_agents": len(AGENT_REGISTRY),
         "online_agents": len(real_agents),  # All registered agents are online
         "offline_agents": 0,  # No offline agents since we're using real registry
-        "squads": simplify_for_template(MOCK_SQUADS),
+        "squads": simplify_for_template(get_squad_data()),
         "performance": simplify_for_template(
             {
                 "avg_response_time": 3.2,
@@ -179,7 +133,7 @@ async def agents_page(request: Request):
         "request": request,
         "agents": simplify_for_template(real_agents),
         "total_agents": len(AGENT_REGISTRY),
-        "squads": simplify_for_template([s["name"] for s in MOCK_SQUADS]),
+        "squads": simplify_for_template([s["name"] for s in get_squad_data()]),
     }
     # Manual template rendering to work around starlette/jinja2 issue
     template = templates.get_template("agents.html")

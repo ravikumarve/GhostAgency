@@ -20,9 +20,7 @@ class RateLimiter:
         one_minute_ago = current_time - timedelta(minutes=1)
         if identifier in self.requests:
             self.requests[identifier] = [
-                req_time
-                for req_time in self.requests[identifier]
-                if req_time > one_minute_ago
+                req_time for req_time in self.requests[identifier] if req_time > one_minute_ago
             ]
         else:
             self.requests[identifier] = []

@@ -5,6 +5,8 @@ from ghostagency.core.base_agent import AIAgent
 
 # Import agent classes
 from ghostagency.agents.squad_support.support_tier1 import SupportTier1Agent
+from ghostagency.agents.squad_support.support_tier2 import SupportTier2Agent
+from ghostagency.agents.squad_support.support_billing import SupportBillingAgent
 from ghostagency.agents.squad_sales.sales_qualification import SalesQualificationAgent
 from ghostagency.agents.squad_content.content_social_media import (
     ContentSocialMediaAgent,
@@ -16,6 +18,8 @@ from ghostagency.agents.squad_ops.ops_executive_assistant import (
 AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     # Support Squad
     "support-tier1": SupportTier1Agent,
+    "support-tier2": SupportTier2Agent,
+    "support-billing": SupportBillingAgent,
     # Sales Squad
     "sales-qualification": SalesQualificationAgent,
     # Content Squad
@@ -24,24 +28,23 @@ AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     "ops-executive-assistant": OpsExecutiveAssistantAgent,
 }
 
-TOTAL_AGENTS = 4
+TOTAL_AGENTS = 6
 
 
 def get_agent(slug: str) -> Type[AIAgent]:
     """Get agent class by slug."""
     if slug not in AGENT_REGISTRY:
         raise KeyError(
-            f"Agent '{slug}' not found. Run `python scripts/list_agents.py` to see all {TOTAL_AGENTS}."
+            f"Agent '{slug}' not found. "
+            f"Run `python scripts/list_agents.py` to see all {TOTAL_AGENTS}."
         )
     return AGENT_REGISTRY[slug]
 
 
 def validate_registry() -> bool:
-    """Validate registry integrity - must contain exactly 4 agents."""
+    """Validate registry integrity - must contain exactly TOTAL_AGENTS agents."""
     count = len(AGENT_REGISTRY)
-    assert count == TOTAL_AGENTS, (
-        f"Registry has {count} agents, expected {TOTAL_AGENTS}"
-    )
+    assert count == TOTAL_AGENTS, f"Registry has {count} agents, expected {TOTAL_AGENTS}"
     return True
 
 

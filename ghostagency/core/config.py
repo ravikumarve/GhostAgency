@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Default configuration
-DEFAULT_MODEL = os.getenv("NIM_MODEL", "deepseek-ai/deepseek-v3-0324")
+DEFAULT_MODEL = os.getenv("NIM_MODEL", "z-ai/glm-5.1")
 LOG_DIR = Path(os.getenv("GHOST_LOG_DIR", "logs"))
 
 # NIM Configuration
@@ -15,7 +15,7 @@ NIM_API_KEY = os.getenv("NIM_API_KEY", "")
 NIM_TIMEOUT = int(os.getenv("NIM_TIMEOUT", "60"))
 
 # Ollama Fallback
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434/api/generate")
 OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
 
 # Runtime

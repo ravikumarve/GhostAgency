@@ -25,16 +25,14 @@ class SupportTier1Agent(AIAgent):
         super().__init__(client_name, knowledge_base_path, model)
         self.escalation_email = escalation_email
 
-    def primary_action(
-        self, customer_message: str, customer_email: Optional[str] = None
-    ) -> str:
+    def primary_action(self, customer_message: str, customer_email: Optional[str] = None) -> str:
         """Handle a customer support ticket."""
 
         # Build prompt with knowledge base context
         prompt = f"""Customer question: {customer_message}
 
-Provide a helpful, professional response based on our knowledge base. 
-If you don't know the answer based on the available information, 
+Provide a helpful, professional response based on our knowledge base.
+If you don't know the answer based on the available information,
 be honest and offer to escalate to a human specialist.
 
 Response:"""
@@ -53,7 +51,11 @@ Response:"""
 
         except Exception as e:
             # Handle LLM errors gracefully
-            error_response = f"I apologize, but I'm experiencing technical difficulties. Please try again later or contact support directly at {self.escalation_email}."
+            error_response = (
+                f"I apologize, but I'm experiencing technical difficulties. "
+                f"Please try again later or contact support directly at "
+                f"{self.escalation_email}."
+            )
             self._log_interaction("handle_ticket_error", customer_message, str(e))
             return error_response
 

@@ -56,3 +56,8 @@ htmlcov/
 
 # Demo files
 demo_kb/
+
+# Local dev config (never ship)
+.opencode/
+.ruff_cache/
+opencode.json

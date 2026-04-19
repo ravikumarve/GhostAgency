@@ -54,9 +54,7 @@ class TestSquadsEndpoints:
 
     def test_get_squad_agents_not_found(self, test_client, test_headers, mock_auth):
         """Test getting agents for non-existent squad."""
-        response = test_client.get(
-            "/api/v1/squads/nonexistent-squad", headers=test_headers
-        )
+        response = test_client.get("/api/v1/squads/nonexistent-squad", headers=test_headers)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -97,9 +95,7 @@ class TestSquadsEndpoints:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "match" in response.json()["detail"]
 
-    def test_execute_squad_agent_missing_role(
-        self, test_client, test_headers, mock_auth
-    ):
+    def test_execute_squad_agent_missing_role(self, test_client, test_headers, mock_auth):
         """Test executing squad agent with missing agent_role field."""
         payload = {"input": "Test input", "client_name": "TestCo"}
 
@@ -109,9 +105,7 @@ class TestSquadsEndpoints:
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    def test_execute_squad_agent_missing_input(
-        self, test_client, test_headers, mock_auth
-    ):
+    def test_execute_squad_agent_missing_input(self, test_client, test_headers, mock_auth):
         """Test executing squad agent with missing input field."""
         payload = {"agent_role": "tier1", "client_name": "TestCo"}
 
@@ -158,13 +152,9 @@ class TestSquadsEndpoints:
         data = response.json()
         assert data["client"] == "default-client"
 
-    def test_execute_squad_agent_rate_limited(
-        self, test_client, test_headers, mock_auth
-    ):
+    def test_execute_squad_agent_rate_limited(self, test_client, test_headers, mock_auth):
         """Test rate limiting on squad agent execution."""
-        with patch(
-            "ghostagency.api.middleware.rate_limiter.RateLimiter.check_rate_limit"
-        ) as mock:
+        with patch("ghostagency.api.middleware.rate_limiter.RateLimiter.check_rate_limit") as mock:
             mock.side_effect = Exception("Rate limit exceeded")
 
             payload = {"agent_role": "tier1", "input": "Test input"}

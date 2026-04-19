@@ -1,7 +1,6 @@
 from __future__ import annotations
-import os
+
 import requests
-from typing import Optional
 
 from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
 from ghostagency.core.config import (
@@ -57,7 +56,9 @@ class NIMClient:
                         f"NIM timeout after {NIM_TIMEOUT}s on attempt {attempt + 1}"
                     )
 
-            except requests.ConnectionError as e:
+            except (requests.ConnectionError, requests.HTTPError) as e:
+                if hasattr(e, "response") and e.response.status_code == 403:
+                    raise LLMConnectionError("NIM authentication failed: Invalid API key")
                 raise LLMConnectionError(f"NIM connection failed: {e}")
 
             except (KeyError, IndexError) as e:

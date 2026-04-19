@@ -1,4 +1,3 @@
-import pytest
 from fastapi import status
 from unittest.mock import patch
 
@@ -45,9 +44,7 @@ class TestAgentsEndpoints:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         assert "Invalid or expired license key" in response.json()["detail"]
 
-    def test_get_agent_info_success(
-        self, test_client, test_headers, mock_auth, test_agent_data
-    ):
+    def test_get_agent_info_success(self, test_client, test_headers, mock_auth, test_agent_data):
         """Test getting specific agent information."""
         response = test_client.get("/api/v1/agents/support-tier1", headers=test_headers)
 
@@ -62,9 +59,7 @@ class TestAgentsEndpoints:
 
     def test_get_agent_info_not_found(self, test_client, test_headers, mock_auth):
         """Test getting non-existent agent information."""
-        response = test_client.get(
-            "/api/v1/agents/nonexistent-agent", headers=test_headers
-        )
+        response = test_client.get("/api/v1/agents/nonexistent-agent", headers=test_headers)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -116,9 +111,7 @@ class TestAgentsEndpoints:
 
     def test_execute_agent_rate_limited(self, test_client, test_headers, mock_auth):
         """Test rate limiting on agent execution."""
-        with patch(
-            "ghostagency.api.middleware.rate_limiter.RateLimiter.check_rate_limit"
-        ) as mock:
+        with patch("ghostagency.api.middleware.rate_limiter.RateLimiter.check_rate_limit") as mock:
             mock.side_effect = Exception("Rate limit exceeded")
 
             params = {"input": "Test input"}

@@ -1,3 +1,5 @@
+"""Shared test fixtures for Ghost Agency tests."""
+
 import pytest
 from unittest.mock import patch
 from fastapi.testclient import TestClient

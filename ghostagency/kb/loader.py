@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import List
-import os
 
 from ghostagency.core.exceptions import KnowledgeBaseError
 
@@ -20,9 +19,7 @@ def load_knowledge_base_dir(directory_path: str) -> str:
     try:
         kb_dir = Path(directory_path)
         if not kb_dir.exists() or not kb_dir.is_dir():
-            raise KnowledgeBaseError(
-                f"Knowledge base directory not found: {directory_path}"
-            )
+            raise KnowledgeBaseError(f"Knowledge base directory not found: {directory_path}")
 
         content_parts = []
 
@@ -38,15 +35,13 @@ def load_knowledge_base_dir(directory_path: str) -> str:
                 except UnicodeDecodeError:
                     # Skip binary files
                     continue
-                except Exception as e:
+                except Exception:
                     # Skip files that can't be read
                     continue
 
         return "\n".join(content_parts)
     except Exception as e:
-        raise KnowledgeBaseError(
-            f"Failed to load knowledge base from {directory_path}: {e}"
-        )
+        raise KnowledgeBaseError(f"Failed to load knowledge base from {directory_path}: {e}")
 
 
 def chunk_knowledge_base(content: str, max_chunk_size: int = 3000) -> List[str]:

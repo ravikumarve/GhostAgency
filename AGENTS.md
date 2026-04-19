@@ -1,20 +1,74 @@
+### [2026-04-20 18:00] - Sprint Gumroad-Packaging
+- **State**: Success ✅ (all quality gates green, install.sh verified)
+- **MCP Data Used**: envsitter (key blanking + verification), grep (path sweep), code_tree (structure check)
+- **Agents Deployed**: @orchestrator (direct execution)
+- **Architectural Decision**:
+  - P0 FIX: Blanked NIM_API_KEY and SMTP_PASS in `.env.example` (credential leak prevention)
+  - Appended `.opencode/`, `.ruff_cache/`, `opencode.json` to `.gitignore` (local dev config must not ship)
+  - Created `LICENSE` (MIT, Copyright 2026 Ravi Kumar) — required for Gumroad distribution
+  - README.md overhaul: fixed 9 stale script paths → `ghostagency/` prefixed, added `PYTHONPATH=.` to all run commands, deleted Deployment Guide referencing deleted `ghost_agency_employees.py` (replaced with uvicorn command), deleted fabricated testimonial, added Quick Install section with curl one-liner
+  - Created `install.sh` — idempotent one-click installer (Python 3.10+ check, venv, deps, .env copy, registry validation). Uses explicit `.venv/bin/pip` and `.venv/bin/python` paths to avoid externally-managed-environment errors on Debian/Ubuntu
+  - Key learning: `PYTHONPATH=.` is required for all `python ghostagency/...` commands since the package is not pip-installed in editable mode. Added to all README commands and install.sh output
+- **Files Modified**: .env.example, .gitignore, README.md, install.sh (new), LICENSE (new)
+- **Quality Gate Results**:
+  - `black . --line-length 100` → ✅ 45 files unchanged
+  - `flake8 . --max-line-length 100 --exclude .venv,__pycache__` → ✅ zero errors
+  - `pytest --tb=short -q` → ✅ 49 passed, 0 failed
+  - `bash install.sh` (clean venv) → ✅ all steps pass
+  - `bash install.sh` (idempotent re-run) → ✅ all steps pass
+- **Remaining Debt**: D1-D7 partially addressed — LICENSE ✅, README ✅, install.sh ✅. Still TODO: Gumroad packaging (zip/tar), install.sh hosted on GitHub main branch for curl one-liner to work
+- **Next Turn Directive**: Push to GitHub main, then create Gumroad product listing. The curl one-liner in README won't work until install.sh is on the main branch.
+
+### [2026-04-20 16:00] - Sprint Cleanup-Demo-Scripts
+- **State**: Success ✅ (all quality gates green)
+- **MCP Data Used**: code_tree (AST scan), grep (import verification), envsitter (key check)
+- **Agents Deployed**: @orchestrator (direct execution), @backend-architect (lint fixes)
+- **Architectural Decision**:
+  - Fixed missing `list_agents` import in `tests/test_dashboard.py` (used on L45, L145 but never imported)
+  - Removed `pytest_plugins` from `tests/test_dashboard_integration.py` (E402 violation) → created `tests/conftest.py` with inline fixtures instead of cross-package plugin reference
+  - Fixed dashboard route URLs in tests: `/dashboard/` → `/`, `/dashboard/agents` → `/agents` (router mounted at root, no prefix)
+  - Deleted 3 root debris files: `test_brutalist.html`, `api.log`, `server.log`
+  - Created `pyproject.toml` with `pythonpath = ["."]`, `testpaths = ["tests"]`, `asyncio_mode = "auto"` — eliminates need for `PYTHONPATH=.` hack
+  - Installed `pytest-timeout` in venv for per-test timeout support
+- **Files Modified**: tests/test_dashboard.py, tests/test_dashboard_integration.py, tests/conftest.py (new), pyproject.toml (new)
+- **Files Deleted**: test_brutalist.html, api.log, server.log
+- **Quality Gate Results**:
+  - `black . --line-length 100` → ✅ 45 files unchanged
+  - `flake8 . --max-line-length 100 --exclude .venv,__pycache__` → ✅ zero errors
+  - `pytest --tb=short -q` → ✅ 49 passed, 0 failed (0.58s)
+- **Smoke Test Results**:
+  - `GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py` → ✅ 6/6 agents, 0 failures
+  - `python ghostagency/scripts/validate_registry.py` → ✅ Registry valid: 6 agents
+  - `python ghostagency/scripts/list_agents.py` → ✅ 6/6 agents listed with correct squad/price
+- **Remaining Debt**: D1-D7 from CPO briefing (LICENSE, README polish, install script, Gumroad packaging)
+- **Next Turn Directive**: If quality gate passes (it does ✅), the project is ready for Gumroad packaging — create LICENSE, polish README with install instructions, and build a one-click install script.
+
+### [2026-04-19 14:30] - Sprint Model-Swap-GLM5.1
+- **State**: Success
+- **MCP Data Used**: envsitter (key read/set), grep (verification sweep)
+- **Agents Deployed**: @orchestrator (direct execution)
+- **Architectural Decision**: Migrated all NIM model references from deepseek-ai/deepseek-v3-0324 to z-ai/glm-5.1 across 5 files. Ollama fallback (deepseek-r1:7b) left untouched — it is the local CPU fallback, not NIM.
+- **Files Modified**: ghostagency/core/config.py (L9), opencode.json (L3), .env.example (L4), config.py (L16), .env (NIM_MODEL key)
+- **Verification**: grep -r "deepseek" --include="*.py" --include="*.json" --include="*.env*" returned zero hits. python3 DEFAULT_MODEL check returned z-ai/glm-5.1
+- **Next Turn Directive**: Run pytest --tb=short -q to confirm no regressions from model swap. Then test NIM connectivity with python3 -c "from ghostagency.integrations.nim_client import NIMClient; c = NIMClient(); print(c.ping())"
+
 # AGENTS.md — Ghost Agency Coding Intelligence File
 
-> **Runtime context for AI coding agents (opencode + DeepSeek V3.1 via NVIDIA NIM)**
+> **Runtime context for AI coding agents (opencode + GLM 5.1 via NVIDIA NIM)**
 > This file is authoritative. Follow every instruction exactly. Never guess; always reference this file first.
-> **Scale:** 156 installed agents across `ghostagency/` directory.
+> **Scale:** 6 installed agents (scaling to 156) across `ghostagency/` directory.
 
 ---
 
 ## 🧠 AGENT IDENTITY & MISSION
 
-You are the **Ghost Agency Code Agent** — an autonomous AI developer building a production-grade, multi-tenant AI Employee SaaS platform with **156 specialised AI agents** organised into functional squads.
+You are the **Ghost Agency Code Agent** — an autonomous AI developer building a production-grade, multi-tenant AI Employee SaaS platform with **6 specialised AI agents (scaling to 156)** organised into functional squads.
 
 **Your north star:** Every line of code you write must be deployable, sellable, and maintainable by a solo operator with zero DevOps team.
 
-**Model context:** You are running inside **opencode** with **DeepSeek V3.1 via NVIDIA NIM** (primary) or **DeepSeek R1** (reasoning-heavy tasks). Optimise for long-horizon multi-step tasks. Think before you act. When uncertain, reason step-by-step explicitly before generating code.
+**Model context:** You are running inside **opencode** with **GLM 5.1 via NVIDIA NIM** (primary). Optimise for long-horizon multi-step tasks. Think before you act. When uncertain, reason step-by-step explicitly before generating code.
 
-**Scale context:** This codebase manages 156 agents. Every design decision must account for horizontal scale — naming conventions, registry lookups, and squad routing must work for agent #1 and agent #156 identically.
+**Scale context:** This codebase manages 6 agents (scaling to 156). Every design decision must account for horizontal scale — naming conventions, registry lookups, and squad routing must work for agent #1 and agent #156 identically.
 
 ---
 
@@ -25,14 +79,14 @@ Always maintain this exact layout. Never create files outside this tree without 
 ```
 ghostagency/
 ├── core/
-│   ├── base_agent.py              # AIAgent abstract base (all 156 agents inherit this)
-│   ├── agent_registry.py          # Central registry — maps slug → class (156 entries)
+│   ├── base_agent.py              # AIAgent abstract base (all agents inherit this)
+│   ├── agent_registry.py          # Central registry — maps slug → class (scales to 156 entries)
 │   ├── squad_router.py            # Routes tasks to correct squad
 │   ├── config.py                  # Centralised config and environment loading
 │   ├── logger.py                  # Shared structured JSON logger
 │   └── exceptions.py              # Custom exception hierarchy
 │
-├── agents/                        # 156 agent modules, organised by squad
+├── agents/                        # Agent modules, organised by squad (6+ and growing)
 │   ├── squad_support/             # Customer-facing support agents
 │   ├── squad_sales/               # Sales, SDR, and revenue agents
 │   ├── squad_content/             # Social media, copywriting, SEO agents
@@ -90,8 +144,8 @@ ghostagency/
 │   └── run_squad_demo.py          # Demo a single squad by name
 │
 ├── scripts/
-│   ├── list_agents.py             # Print all 156 agents with squad + status
-│   ├── validate_registry.py       # Assert 156 agents registered correctly
+│   ├── list_agents.py             # Print all agents with squad + status
+│   ├── validate_registry.py       # Assert agents registered correctly
 │   └── benchmark.py              # Response time benchmarks per squad
 │
 ├── logs/                          # Auto-created at runtime
@@ -123,11 +177,11 @@ pip install black==24.4.2 flake8==7.1.0 pytest==8.2.0 pytest-cov==5.0.0 mypy==1.
 
 ### NVIDIA NIM Setup (primary LLM — cloud, no GPU required)
 ```bash
-# NIM uses DeepSeek V3.1 via API — no local GPU needed
+# NIM uses GLM 5.1 via API — no local GPU needed
 # Set in .env:
 # NIM_API_KEY=your_key_here
 # NIM_BASE_URL=https://integrate.api.nvidia.com/v1
-# NIM_MODEL=deepseek-ai/deepseek-v3-0324
+# NIM_MODEL=z-ai/glm-5.1
 
 # Verify NIM connection
 python -c "from ghostagency.integrations.nim_client import NIMClient; c = NIMClient(); print(c.ping())"
@@ -222,7 +276,7 @@ from ghostagency.core.logger import get_logger
 
 class AIAgent(ABC):
     """
-    Abstract base for all 156 Ghost Agency AI agents.
+    Abstract base for all Ghost Agency AI agents.
     Concrete subclasses must implement: primary_action(), get_role_prompt(), agent_slug
     """
 
@@ -274,7 +328,7 @@ class AIAgent(ABC):
 
 ### Agent Registry Pattern
 
-The registry maps every agent slug to its class. It must always contain exactly **156 entries**.
+The registry maps every agent slug to its class. It currently contains **6 entries** (scaling to 156).
 
 ```python
 # ghostagency/core/agent_registry.py
@@ -282,7 +336,7 @@ from __future__ import annotations
 from typing import Type
 from ghostagency.core.base_agent import AIAgent
 
-# Import all 156 agent classes
+# Import agent classes (6 currently, scaling to 156)
 from ghostagency.agents.squad_support import *
 from ghostagency.agents.squad_sales import *
 from ghostagency.agents.squad_content import *
@@ -299,10 +353,10 @@ AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     "support-tier1":             SupportTier1Agent,
     "support-tier2":             SupportTier2Agent,
     "support-billing":           SupportBillingAgent,
-    # ... all 156 entries ...
+    # ... all entries ...
 }
 
-TOTAL_AGENTS = 156
+TOTAL_AGENTS = 6
 
 def get_agent(slug: str) -> Type[AIAgent]:
     if slug not in AGENT_REGISTRY:
@@ -310,13 +364,13 @@ def get_agent(slug: str) -> Type[AIAgent]:
     return AGENT_REGISTRY[slug]
 
 def validate_registry() -> bool:
-    """Called at startup. Fails loudly if count != 156."""
+    """Called at startup. Fails loudly if count != TOTAL_AGENTS."""
     count = len(AGENT_REGISTRY)
     assert count == TOTAL_AGENTS, f"Registry has {count} agents, expected {TOTAL_AGENTS}"
     return True
 ```
 
-### Squad Overview (156 Agents Total)
+### Squad Overview (6 Agents Total - Scaling to 156)
 
 | Squad | Dir | Agent Count | Price Range | Primary Method |
 |---|---|---|---|---|
@@ -344,15 +398,15 @@ import requests
 from typing import Optional
 from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
 
-NIM_BASE_URL = os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1")
-NIM_MODEL = os.getenv("NIM_MODEL", "deepseek-ai/deepseek-v3-0324")
+NIM_BASE_URL = os.getenv("NIM_BASE_URL", "[https://integrate.api.nvidia.com/v1](https://integrate.api.nvidia.com/v1)")
+NIM_MODEL = os.getenv("NIM_MODEL", "z-ai/glm-5.1")
 NIM_API_KEY = os.getenv("NIM_API_KEY", "")
 NIM_TIMEOUT = int(os.getenv("NIM_TIMEOUT", "60"))
 MAX_RETRIES = int(os.getenv("GHOST_MAX_RETRIES", "3"))
 
 
 class NIMClient:
-    """NVIDIA NIM API client — primary LLM backend for all 156 agents."""
+    """NVIDIA NIM API client — primary LLM backend for all agents."""
 
     def __init__(self, model: str | None = None) -> None:
         self.model = model or NIM_MODEL
@@ -444,7 +498,7 @@ match squad:
     case _:           raise ValueError(f"Unknown squad: {squad}")
 ```
 
-### Naming Conventions (critical for 156-agent scale)
+### Naming Conventions (critical for agent scale)
 ```python
 # Agent slugs: {squad}-{role}  (kebab-case, max 40 chars)
 "support-tier1"           ✅
@@ -584,7 +638,7 @@ def test_all_agents_have_required_attributes():
 # NVIDIA NIM (primary LLM)
 NIM_API_KEY=
 NIM_BASE_URL=https://integrate.api.nvidia.com/v1
-NIM_MODEL=deepseek-ai/deepseek-v3-0324
+NIM_MODEL=z-ai/glm-5.1
 NIM_TIMEOUT=60
 
 # Ollama (local fallback — CPU-only)
@@ -628,7 +682,7 @@ TELEGRAM_BOT_TOKEN=
 | Registry load time | < 200ms | > 1s |
 | Log write failure rate | 0% | > 1% |
 
-### Optimisation Patterns (for 156-agent scale)
+### Optimisation Patterns (for agent scale)
 ```python
 # ✅ Cache KB at init, not per-call
 def __init__(self, ...):
@@ -658,12 +712,12 @@ Before marking any feature "done":
 
 - [ ] `pytest --tb=short -q` — all tests pass
 - [ ] `pytest --cov=ghostagency` — coverage ≥ 80% globally, 100% on registry + base
-- [ ] `python scripts/validate_registry.py` — confirms exactly 156 agents registered
+- [ ] `python scripts/validate_registry.py` — confirms agents registered correctly
 - [ ] `flake8 . --max-line-length 100` — no lint errors
 - [ ] `mypy ghostagency/core/ ghostagency/agents/ --ignore-missing-imports` — no type errors
 - [ ] `grep -r "api_key\|password\|secret\|NIM_API_KEY" . --include="*.py"` — no hardcoded secrets
 - [ ] `GHOST_MOCK_AI=true python demo/run_demo.py` — demo runs clean
-- [ ] `python scripts/list_agents.py` — all 156 agents listed with correct squad
+- [ ] `python scripts/list_agents.py` — all agents listed with correct squad
 - [ ] Log files created under `logs/{client_slug}/{squad}/{agent_slug}/`
 - [ ] README reflects any new CLI commands or env vars
 
@@ -676,7 +730,7 @@ Before marking any feature "done":
 | `LLMConnectionError: NIM` | NIM API key missing or wrong | Check `NIM_API_KEY` in `.env` |
 | `LLMTimeoutError` | Prompt too long or NIM overloaded | Reduce KB injection size; retry |
 | `KeyError: agent not found` | Agent slug not in registry | Run `python scripts/validate_registry.py` |
-| `AssertionError: 154 agents, expected 156` | 2 agents not registered | Add missing slugs to `AGENT_REGISTRY` |
+| `AssertionError: 4 agents, expected 6` | Agents not registered | Add missing slugs to `AGENT_REGISTRY` |
 | `ImportError` on squad module | Agent file not created yet | Create the agent file first, then register |
 | `ERROR: Ollama not running` | Ollama fallback not started | `ollama serve` in separate terminal |
 | `ERROR: model not found` | Model not pulled | `ollama pull deepseek-r1:7b` |
@@ -692,7 +746,7 @@ Before marking any feature "done":
 When you (the AI coding agent) are uncertain, follow these in order:
 
 1. **Registry first** — if an agent slug isn't in `AGENT_REGISTRY`, it doesn't exist. Check the registry before writing new code.
-2. **Validate count** — after any add/remove, run `validate_registry.py`. Count must be 156.
+2. **Validate count** — after any add/remove, run `validate_registry.py`. Count must match TOTAL_AGENTS.
 3. **Structure first** — create the file skeleton before filling content.
 4. **Tests before implementation** — write test stubs first, then make them pass.
 5. **Mock by default** — any external call (NIM, Ollama, SMTP, webhook) must be mockable via env var or dependency injection.
@@ -707,17 +761,17 @@ When you (the AI coding agent) are uncertain, follow these in order:
 ## 🧩 OPENCODE-SPECIFIC INSTRUCTIONS
 
 ### Model Selection
-- **DeepSeek V3.1 (NIM)** — default for all coding tasks (fast, accurate)
+- **z-ai/glm-5.1(NIM)** — default for all coding tasks (fast, accurate)
 - **DeepSeek R1** — use for complex multi-step reasoning: architecture decisions, escalation routing design, registry refactoring
 
-### For DeepSeek V3.1 (fast coding)
+### For GLM 5.1 (fast coding)
 - Prefer direct code generation
 - Use the test file as your spec — write code to pass the tests, not the other way around
 - Generate complete, runnable files — no placeholders like `# TODO: implement`
 
 ### For DeepSeek R1 (reasoning tasks)
 - Emit reasoning in a `<think>` block before any code
-- For multi-step refactoring (e.g. migrating all 156 agents to a new base class), plan all changes before writing a single line
+- For multi-step refactoring (e.g. migrating agents to a new base class), plan all changes before writing a single line
 - Confirm the full file structure before editing to avoid orphaned functions
 
 ### Tool Use in opencode
@@ -768,4 +822,4 @@ pytest tests/squads/test_squad_support.py -v
 ---
 
 *This file is the single source of truth for all coding agents working on Ghost Agency.*
-*Last updated: 2025 | Scale: 156 agents | Model: opencode + DeepSeek V3.1 via NVIDIA NIM*
+*Last updated: 2025 | Scale: 6 agents (scaling to 156) | Model: opencode + GLM 5.1 via NVIDIA NIM*

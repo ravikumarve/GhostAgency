@@ -1,10 +1,9 @@
 from __future__ import annotations
-from typing import List
+
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 
 from ghostagency.core.agent_registry import get_agent, AGENT_REGISTRY
-from ghostagency.core.base_agent import AIAgent
 from ghostagency.api.middleware.auth import auth_scheme
 
 router = APIRouter(tags=["agents"])
@@ -32,9 +31,7 @@ async def list_agents(_: str = Depends(auth_scheme)) -> JSONResponse:
 
 
 @router.get("/agents/{agent_slug}")
-async def get_agent_info(
-    agent_slug: str, _: str = Depends(auth_scheme)
-) -> JSONResponse:
+async def get_agent_info(agent_slug: str, _: str = Depends(auth_scheme)) -> JSONResponse:
     """Get detailed information about a specific agent."""
     try:
         agent_class = get_agent(agent_slug)

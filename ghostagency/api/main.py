@@ -1,11 +1,11 @@
 from __future__ import annotations
-from fastapi import FastAPI, Depends
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from ghostagency.api.routes import agents, squads, health, dashboard
-from ghostagency.api.middleware.auth import auth_scheme
 from ghostagency.core.config import API_PREFIX
 
 

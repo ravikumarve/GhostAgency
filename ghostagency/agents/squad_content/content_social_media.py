@@ -48,7 +48,10 @@ Post:"""
             return post
 
         except Exception as e:
-            error_response = f"I apologize, but I'm experiencing technical difficulties creating the post. Please try again later."
+            error_response = (
+                "I apologize, but I'm experiencing technical difficulties "
+                "creating the post. Please try again later."
+            )
             self._log_interaction("create_post_error", f"{platform} - {topic}", str(e))
             return error_response
 
@@ -74,7 +77,7 @@ Response:"""
             return response
 
         except Exception as e:
-            error_response = f"I appreciate your comment! I'll get back to you shortly."
+            error_response = "I appreciate your comment! I'll get back to you shortly."
             self._log_interaction("respond_comment_error", comment_text[:50], str(e))
             return error_response
 
@@ -106,12 +109,23 @@ Brand Voice:
     def _get_platform_guidelines(self, platform: str) -> str:
         """Get platform-specific guidelines."""
         guidelines = {
-            "twitter": "Max 280 characters. Punchy and concise. Use 1-2 relevant hashtags.",
-            "linkedin": "150-300 words. Professional yet engaging. Tell a story. No hashtags unless very relevant.",
-            "instagram": "Visual-focused caption. 100-200 words. Use 5-10 hashtags. Include call-to-action.",
-            "facebook": "100-200 words. Conversational. Ask questions to drive engagement.",
-            "tiktok": "Short, engaging videos. 15-60 seconds. Trend-focused. Music and effects.",
-            "youtube": "Longer form content. 5-15 minutes. Educational or entertaining. Clear structure.",
+            "twitter": ("Max 280 characters. Punchy and concise. Use 1-2 relevant hashtags."),
+            "linkedin": (
+                "150-300 words. Professional yet engaging. "
+                "Tell a story. No hashtags unless very relevant."
+            ),
+            "instagram": (
+                "Visual-focused caption. 100-200 words. "
+                "Use 5-10 hashtags. Include call-to-action."
+            ),
+            "facebook": ("100-200 words. Conversational. Ask questions to drive engagement."),
+            "tiktok": (
+                "Short, engaging videos. 15-60 seconds. " "Trend-focused. Music and effects."
+            ),
+            "youtube": (
+                "Longer form content. 5-15 minutes. "
+                "Educational or entertaining. Clear structure."
+            ),
         }
         return guidelines.get(
             platform.lower(), "Create engaging content appropriate for the platform"

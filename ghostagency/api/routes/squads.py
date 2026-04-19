@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Dict, List
+
+from typing import Dict
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 
@@ -38,9 +39,7 @@ async def list_squads(_: str = Depends(auth_scheme)) -> JSONResponse:
 
 
 @router.get("/squads/{squad_name}")
-async def get_squad_agents(
-    squad_name: str, _: str = Depends(auth_scheme)
-) -> JSONResponse:
+async def get_squad_agents(squad_name: str, _: str = Depends(auth_scheme)) -> JSONResponse:
     """Get all agents in a specific squad."""
     squad_agents = []
 

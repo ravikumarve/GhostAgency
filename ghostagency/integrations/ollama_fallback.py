@@ -1,7 +1,6 @@
 from __future__ import annotations
-import os
+
 import requests
-from typing import Optional
 
 from ghostagency.core.exceptions import LLMConnectionError
 from ghostagency.core.config import OLLAMA_URL, OLLAMA_TIMEOUT
@@ -13,7 +12,7 @@ class OllamaFallbackClient:
     def __init__(self, base_url: str | None = None) -> None:
         self.base_url = base_url or OLLAMA_URL
 
-    def complete(self, prompt: str, model: str = "phi3") -> str:
+    def complete(self, prompt: str, model: str = "phi3:mini") -> str:
         """Single-turn completion using Ollama."""
         try:
             response = requests.post(
