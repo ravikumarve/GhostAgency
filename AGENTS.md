@@ -1,23 +1,27 @@
-### [2026-04-20 18:00] - Sprint Gumroad-Packaging
-- **State**: Success ✅ (all quality gates green, install.sh verified)
-- **MCP Data Used**: envsitter (key blanking + verification), grep (path sweep), code_tree (structure check)
+### [2026-04-20 21:30] - Sprint Gumroad-Packaging (Git Push + Finalize)
+- **State**: Success ✅ (all changes pushed to GitHub main, quality gates green)
+- **MCP Data Used**: envsitter (key blanking + verification), grep (path sweep), git (push + verify)
 - **Agents Deployed**: @orchestrator (direct execution)
 - **Architectural Decision**:
-  - P0 FIX: Blanked NIM_API_KEY and SMTP_PASS in `.env.example` (credential leak prevention)
-  - Appended `.opencode/`, `.ruff_cache/`, `opencode.json` to `.gitignore` (local dev config must not ship)
-  - Created `LICENSE` (MIT, Copyright 2026 Ravi Kumar) — required for Gumroad distribution
-  - README.md overhaul: fixed 9 stale script paths → `ghostagency/` prefixed, added `PYTHONPATH=.` to all run commands, deleted Deployment Guide referencing deleted `ghost_agency_employees.py` (replaced with uvicorn command), deleted fabricated testimonial, added Quick Install section with curl one-liner
-  - Created `install.sh` — idempotent one-click installer (Python 3.10+ check, venv, deps, .env copy, registry validation). Uses explicit `.venv/bin/pip` and `.venv/bin/python` paths to avoid externally-managed-environment errors on Debian/Ubuntu
-  - Key learning: `PYTHONPATH=.` is required for all `python ghostagency/...` commands since the package is not pip-installed in editable mode. Added to all README commands and install.sh output
-- **Files Modified**: .env.example, .gitignore, README.md, install.sh (new), LICENSE (new)
+  - Committed 75 files across 3 sprints: `feat: Gumroad-ready packaging — LICENSE, install.sh, README polish, credential remediation` (6e6702f)
+  - Follow-up fix: corrected curl URL from `ghost-agency` → `GhostAgency` to match actual repo name (cdc209d)
+  - Follow-up fix: updated Quick Install section — repo is **private**, so curl one-liner deferred; replaced with `clone + bash install.sh` instructions (70f7aec)
+  - Key discovery: GitHub repo `ravikumarve/GhostAgency` is private — raw.githubusercontent.com URLs return 404 for unauthenticated access. The curl one-liner will only work after making the repo public or using a GitHub release with a public asset
+  - All 3 commits pushed to `origin/main` successfully
+- **Files Modified in this session**: README.md (2 follow-up commits)
 - **Quality Gate Results**:
   - `black . --line-length 100` → ✅ 45 files unchanged
   - `flake8 . --max-line-length 100 --exclude .venv,__pycache__` → ✅ zero errors
   - `pytest --tb=short -q` → ✅ 49 passed, 0 failed
   - `bash install.sh` (clean venv) → ✅ all steps pass
   - `bash install.sh` (idempotent re-run) → ✅ all steps pass
-- **Remaining Debt**: D1-D7 partially addressed — LICENSE ✅, README ✅, install.sh ✅. Still TODO: Gumroad packaging (zip/tar), install.sh hosted on GitHub main branch for curl one-liner to work
-- **Next Turn Directive**: Push to GitHub main, then create Gumroad product listing. The curl one-liner in README won't work until install.sh is on the main branch.
+  - `git push origin main` → ✅ 3 commits pushed (6e6702f, cdc209d, 70f7aec)
+- **Remaining Debt**:
+  - D1: LICENSE ✅ | D2: README ✅ | D3: install.sh ✅ | D4: .gitignore ✅ | D5: .env.example ✅
+  - D6: Gumroad product listing — not yet created
+  - D7: Gumroad packaging (zip/tar) — not yet created
+  - D8: Repo visibility — currently private; curl one-liner requires public repo or GitHub release asset
+- **Next Turn Directive**: Create Gumroad product listing. Decide on repo visibility (public for curl install, or private with zip distribution via Gumroad). Build release zip/tar for Gumroad upload.
 
 ### [2026-04-20 16:00] - Sprint Cleanup-Demo-Scripts
 - **State**: Success ✅ (all quality gates green)
