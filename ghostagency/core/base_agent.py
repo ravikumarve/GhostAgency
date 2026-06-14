@@ -12,7 +12,7 @@ from ghostagency.integrations.ollama_fallback import OllamaFallbackClient
 
 class AIAgent(ABC):
     """
-    Abstract base for all 156 Ghost Agency AI agents.
+    Abstract base for all Ghost Agency AI agents.
     Concrete subclasses must implement: primary_action(), get_role_prompt(), agent_slug
     """
 

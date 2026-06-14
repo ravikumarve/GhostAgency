@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 
-from ghostagency.core.agent_registry import get_agent, AGENT_REGISTRY
+from ghostagency.core.agent_registry import get_agent, AGENT_REGISTRY, TOTAL_AGENTS
 from ghostagency.api.middleware.auth import auth_scheme
 
 router = APIRouter(tags=["agents"])
@@ -26,7 +26,7 @@ async def list_agents(_: str = Depends(auth_scheme)) -> JSONResponse:
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"count": len(agents_list), "total": 156, "agents": agents_list},
+        content={"count": len(agents_list), "total": TOTAL_AGENTS, "agents": agents_list},
     )
 
 

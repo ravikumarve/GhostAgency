@@ -15,7 +15,7 @@ class TestAgentsEndpoints:
         assert "count" in data
         assert "total" in data
         assert "agents" in data
-        assert data["total"] == 156
+        assert data["total"] == 6
         assert len(data["agents"]) == data["count"]
 
         # Verify agent structure

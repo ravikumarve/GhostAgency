@@ -31,7 +31,7 @@ class TestHealthEndpoints:
         assert "agents_registered" in data
         assert "agents_total" in data
         assert "status" in data
-        assert data["agents_total"] == 156
+        assert data["agents_total"] == 6
 
     def test_metrics_endpoint_no_auth_required(self, test_client):
         """Test that metrics endpoint doesn't require authentication."""

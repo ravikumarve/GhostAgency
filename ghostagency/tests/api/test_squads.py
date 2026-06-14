@@ -15,7 +15,7 @@ class TestSquadsEndpoints:
 
         assert "squads" in data
         assert "total_agents" in data
-        assert data["total_agents"] == 156
+        assert data["total_agents"] == 6
 
         # Verify squad structure
         squad = data["squads"][0]

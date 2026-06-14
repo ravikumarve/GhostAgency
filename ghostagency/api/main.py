@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     app = FastAPI(
         title="Ghost Agency API",
-        description="REST API and Dashboard for Ghost Agency's 156 AI agents",
+        description="REST API and Dashboard for Ghost Agency's AI agents",
         version="1.0.0",
         docs_url=f"{API_PREFIX}/docs",
         redoc_url=f"{API_PREFIX}/redoc",

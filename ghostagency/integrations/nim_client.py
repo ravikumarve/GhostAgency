@@ -13,7 +13,7 @@ from ghostagency.core.config import (
 
 
 class NIMClient:
-    """NVIDIA NIM API client — primary LLM backend for all 156 agents."""
+    """NVIDIA NIM API client — primary LLM backend for all Ghost Agency agents."""
 
     def __init__(self, model: str | None = None) -> None:
         self.model = model or DEFAULT_MODEL
