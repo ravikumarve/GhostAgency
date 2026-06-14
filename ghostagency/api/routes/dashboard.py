@@ -70,9 +70,9 @@ def get_squad_data() -> list[dict]:
     return [{"name": name, "count": count} for name, count in sorted(squad_counts.items())]
 
 
-@router.get("/landing")
+@router.get("/")
 async def landing_page(request: Request):
-    """Landing page."""
+    """Landing page (root)."""
     real_agents = get_real_agent_data()
     context = {
         "request": request,
@@ -86,7 +86,7 @@ async def landing_page(request: Request):
     return HTMLResponse(content)
 
 
-@router.get("/")
+@router.get("/dashboard")
 async def dashboard(request: Request):
     """Main dashboard page."""
     real_agents = get_real_agent_data()
