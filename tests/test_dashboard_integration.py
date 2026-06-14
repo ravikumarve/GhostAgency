@@ -22,7 +22,7 @@ class TestDashboardIntegration:
             mock_get_template.return_value = mock_template
 
             # Act
-            response = test_client.get("/", headers=test_headers)
+            response = test_client.get("/dashboard", headers=test_headers)
 
         # Assert
         assert response.status_code == status.HTTP_200_OK
@@ -35,6 +35,24 @@ class TestDashboardIntegration:
         assert context["total_agents"] == 6
         assert context["online_agents"] == 6
         assert context["offline_agents"] == 0
+
+    def test_landing_page_route_returns_correct_context(self, test_client, test_headers, mock_auth):
+        """Test that landing page route returns correct agent data."""
+        mock_template = MagicMock()
+        mock_template.render.return_value = "<html>test</html>"
+
+        with patch("ghostagency.api.routes.dashboard.templates.get_template") as mock_get_template:
+            mock_get_template.return_value = mock_template
+
+            response = test_client.get("/", headers=test_headers)
+
+        assert response.status_code == status.HTTP_200_OK
+        mock_get_template.assert_called_once_with("landing.html")
+        call_args = mock_template.render.call_args
+        context = call_args[1]
+
+        assert context["total_agents"] == 6
+        assert len(context["agents"]) == 6
 
     def test_agents_page_route_returns_correct_data(self, test_client, test_headers, mock_auth):
         """Test that agents page route returns correct agent data."""
