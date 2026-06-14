@@ -1,12 +1,9 @@
 """LLM provider factory — selects and chains providers by config.
 
-Selection is driven by the LLM_PROVIDER env var:
-
-  LLM_PROVIDER=openai     → OpenAI (GPT-4o, etc.) — default
-  LLM_PROVIDER=anthropic  → Anthropic (Claude 3.5)
-  LLM_PROVIDER=gemini     → Google Gemini 1.5
-  LLM_PROVIDER=nim        → NVIDIA NIM (testing/internal)
-  LLM_PROVIDER=ollama     → Local Ollama (fallback)
+Selection priority:
+  1. SQLite settings DB (saved via /settings page)
+  2. LLM_PROVIDER env var
+  3. Default: openai
 
 If the primary provider fails with a connection/auth error, the factory
 falls through the chain to the next available provider.
@@ -14,8 +11,7 @@ falls through the chain to the next available provider.
 
 from __future__ import annotations
 
-import os
-
+from ghostagency.core import settings_db
 from ghostagency.core.config import LLM_PROVIDER
 from ghostagency.core.exceptions import LLMConnectionError
 from ghostagency.integrations.providers.base import LLMProvider
@@ -51,12 +47,20 @@ def _instantiate(name: str, model: str | None = None) -> LLMProvider:
 
 
 def get_llm_client(model: str | None = None) -> LLMProvider:
-    """Return the primary LLM client based on LLM_PROVIDER env var.
+    """Return the primary LLM client.
 
-    The client wraps the fallback chain internally — if the primary
-    provider can't connect, it transparently tries the next in the chain.
+    Selection priority:
+      1. SQLite settings DB (saved via /settings page)
+      2. LLM_PROVIDER env var
+      3. Default: "openai"
+
+    The client wraps the fallback chain — if primary can't connect,
+    it transparently tries the next provider.
     """
-    primary = (os.getenv("LLM_PROVIDER") or LLM_PROVIDER).lower().strip()
+    primary = (
+        settings_db.get("llm_provider")
+        or LLM_PROVIDER
+    ).lower().strip()
 
     if primary not in _PROVIDER_CLASSES:
         primary = "openai"

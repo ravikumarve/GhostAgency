@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import requests
 
+from ghostagency.core import settings_db
 from ghostagency.core.exceptions import LLMConnectionError
 from ghostagency.core.config import OLLAMA_URL, OLLAMA_TIMEOUT
 from ghostagency.integrations.providers.base import LLMProvider
@@ -13,8 +14,9 @@ class OllamaFallbackClient(LLMProvider):
     """Local Ollama provider (CPU-friendly fallback)."""
 
     def __init__(self, model: str | None = None) -> None:
-        self.base_url = OLLAMA_URL
+        self.base_url = settings_db.get("ollama_url") or OLLAMA_URL
         self.default_model = model or "phi3:mini"
+        self.timeout = settings_db.get_int("ollama_timeout") or OLLAMA_TIMEOUT
 
     def ping(self) -> str:
         resp = self.complete("Respond with exactly: OK")
@@ -35,7 +37,7 @@ class OllamaFallbackClient(LLMProvider):
                     "stream": False,
                     "options": {"num_predict": max_tokens},
                 },
-                timeout=OLLAMA_TIMEOUT,
+                timeout=self.timeout,
             )
 
             if response.status_code == 200:

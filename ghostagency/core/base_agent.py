@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
 
+from ghostagency.core import settings_db
 from ghostagency.core.config import DEFAULT_MODEL
 from ghostagency.core.logger import get_logger
 from ghostagency.integrations.llm_client import get_llm_client
@@ -46,10 +47,17 @@ class AIAgent(ABC):
     def _call_llm(self, prompt: str, model: str | None = None) -> str:
         """Provider-agnostic LLM call with automatic chain fallback.
 
-        Uses the provider factory which chains through available providers
+        Selection priority:
+          1. SQLite settings DB (saved via /settings page)
+          2. Environment variables
+          3. Defaults from config
+
+        The provider factory chains through available providers
         (OpenAI → Anthropic → Gemini → NIM → Ollama) on connection failure.
         """
-        if os.getenv("GHOST_MOCK_AI") == "true":
+        # Check mock mode from settings DB first, then env var
+        mock_mode = settings_db.get_bool("ghost_mock_ai") or False
+        if mock_mode:
             return f"[MOCK] Response for: {prompt[:50]}"
 
         client = get_llm_client(model=model or self.model)

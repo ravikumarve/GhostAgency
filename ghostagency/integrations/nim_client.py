@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import requests
 
+from ghostagency.core import settings_db
 from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
 from ghostagency.core.config import (
     NIM_BASE_URL,
-    DEFAULT_MODEL,
     NIM_API_KEY,
     NIM_TIMEOUT,
     GHOST_MAX_RETRIES,
@@ -14,15 +14,17 @@ from ghostagency.integrations.providers.base import LLMProvider
 
 
 class NIMClient(LLMProvider):
-    """NVIDIA NIM API client — primary LLM backend for all Ghost Agency agents."""
+    """NVIDIA NIM API client — testing / internal provider."""
 
     def __init__(self, model: str | None = None) -> None:
-        self.model = model or DEFAULT_MODEL
-        self.base_url = NIM_BASE_URL
+        self.model = model or settings_db.get("nim_model") or "z-ai/glm-5.1"
+        self.base_url = settings_db.get("nim_base_url") or NIM_BASE_URL
+        api_key = settings_db.get("nim_api_key") or NIM_API_KEY
         self.headers = {
-            "Authorization": f"Bearer {NIM_API_KEY}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
+        self.timeout = settings_db.get_int("nim_timeout") or NIM_TIMEOUT
 
     def ping(self) -> str:
         """Verify NIM connectivity."""
@@ -46,7 +48,7 @@ class NIMClient(LLMProvider):
                         "messages": messages,
                         "max_tokens": max_tokens,
                     },
-                    timeout=NIM_TIMEOUT,
+                    timeout=self.timeout,
                 )
                 response.raise_for_status()
                 return response.json()["choices"][0]["message"]["content"].strip()
@@ -54,7 +56,7 @@ class NIMClient(LLMProvider):
             except requests.Timeout:
                 if attempt == GHOST_MAX_RETRIES - 1:
                     raise LLMTimeoutError(
-                        f"NIM timeout after {NIM_TIMEOUT}s on attempt {attempt + 1}"
+                        f"NIM timeout after {self.timeout}s on attempt {attempt + 1}"
                     )
 
             except (requests.ConnectionError, requests.HTTPError) as e:

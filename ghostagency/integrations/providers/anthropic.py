@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import requests
 
+from ghostagency.core import settings_db
 from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
 from ghostagency.core.config import (
     ANTHROPIC_API_KEY,
@@ -19,16 +20,21 @@ class AnthropicProvider(LLMProvider):
     """Anthropic Messages API provider.
 
     Uses the /v1/messages endpoint with the Anthropic API format.
+    API key is read from settings DB (with env var fallback) at call time.
     """
 
     def __init__(self, model: str | None = None) -> None:
-        self.model = model or ANTHROPIC_MODEL
-        self.base_url = ANTHROPIC_BASE_URL
+        self.model = model or settings_db.get("anthropic_model") or ANTHROPIC_MODEL
+        self.base_url = settings_db.get("anthropic_base_url") or ANTHROPIC_BASE_URL
+        api_key = settings_db.get("anthropic_api_key") or ANTHROPIC_API_KEY
         self.headers = {
-            "x-api-key": ANTHROPIC_API_KEY,
+            "x-api-key": api_key,
             "anthropic-version": "2023-06-01",
             "Content-Type": "application/json",
         }
+        self.timeout = (
+            settings_db.get_int("anthropic_timeout") or ANTHROPIC_TIMEOUT
+        )
 
     def ping(self) -> str:
         resp = self.complete("Respond with exactly: OK")
@@ -49,7 +55,7 @@ class AnthropicProvider(LLMProvider):
                     f"{self.base_url}/v1/messages",
                     headers=self.headers,
                     json=payload,
-                    timeout=ANTHROPIC_TIMEOUT,
+                    timeout=self.timeout,
                 )
 
                 if response.status_code == 401:
@@ -77,7 +83,7 @@ class AnthropicProvider(LLMProvider):
             except requests.Timeout:
                 if attempt == GHOST_MAX_RETRIES - 1:
                     raise LLMTimeoutError(
-                        f"Anthropic timeout after {ANTHROPIC_TIMEOUT}s on attempt {attempt + 1}"
+                        f"Anthropic timeout after {self.timeout}s on attempt {attempt + 1}"
                     )
 
             except (requests.ConnectionError, requests.HTTPError) as e:
