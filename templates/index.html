@@ -3,6 +3,7 @@
 {% block title %}Dashboard - Ghost Agency{% endblock %}
 
 {% block content %}
+{% import "macros/cards.html" as cards %}
 <div class="grid grid-3">
     <!-- Agent Status Card -->
     <div class="card">
@@ -44,27 +45,15 @@
 
 <div class="grid grid-2 mt-2">
     <!-- Recent Activity -->
-    <div class="card">
-        <div class="card-header">RECENT ACTIVITY</div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>AGENT</th>
-                    <th>ACTION</th>
-                    <th>TIME</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for activity in recent_activity %}
-                <tr>
-                    <td>{{ activity.agent }}</td>
-                    <td>{{ activity.action }}</td>
-                    <td>{{ activity.timestamp }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    {% call cards.glass_table(['AGENT', 'ACTION', 'TIME']) %}
+    {% for activity in recent_activity %}
+    <tr>
+        <td>{{ activity.agent }}</td>
+        <td>{{ activity.action }}</td>
+        <td>{{ activity.timestamp }}</td>
+    </tr>
+    {% endfor %}
+    {% endcall %}
 
     <!-- System Health -->
     <div class="card">
