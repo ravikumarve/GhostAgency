@@ -19,6 +19,27 @@
 - **Quality Gate**: 91/91 tests passed (75 existing + 16 new) ✅ | flake8 clean ✅
 - **Next Turn Directive**: Settings page ready. Next: wire runtime config to use settings_db overrides in provider factory and base_agent.
 
+### [2026-06-14 17:30] - Wire Runtime to SQLite Settings
+- **State**: Success ✅
+- **MCP Data Used**: Direct file reads (llm_client.py, base_agent.py, all provider clients)
+- **Agents Deployed**: @codebase (direct execution — 7 modified files)
+- **Architectural Decision**:
+  - `get_llm_client()` now reads `LLM_PROVIDER` from settings DB first (env var fallback)
+  - `base_agent._call_llm()` checks `GHOST_MOCK_AI` from settings DB via `get_bool()`
+  - All 5 providers read their API keys, models, base URLs, and timeouts from settings DB at call time
+  - No import cycle — `settings_db` module uses lazy initialization (creates DB on first access)
+  - Provider constructors do a fast `SELECT` on each instantiation (negligible vs LLM API latency)
+- **Files Modified** (7):
+  - `integrations/llm_client.py` — use `settings_db.get('llm_provider')` for provider selection
+  - `core/base_agent.py` — use `settings_db.get_bool('ghost_mock_ai')` for mock mode
+  - `integrations/providers/openai.py` — read API key/model/URL/timeout from DB
+  - `integrations/providers/anthropic.py` — same
+  - `integrations/providers/gemini.py` — same
+  - `integrations/nim_client.py` — same
+  - `integrations/ollama_fallback.py` — same
+- **Quality Gate**: 91/91 tests ✅ | flake8 clean ✅ | Integration test verified ✅
+- **Next Turn Directive**: Settings page is fully functional at runtime. Changes via /settings take effect immediately.
+
 ### [2026-06-14 16:30] - Multi-Provider LLM Support — OpenAI, Anthropic, Gemini
 - **State**: Success ✅
 - **MCP Data Used**: Direct file reads (existing provider clients, config, base_agent), grep (import references)
