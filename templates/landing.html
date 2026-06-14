@@ -151,10 +151,10 @@
             <div class="grid-4">
                 {% for agent in agents %}
                 <div class="role-card">
-                    <div class="role-icon">{{ agent.icon | default('🤖') }}</div>
+                    <div class="role-icon">{{ agent.icon }}</div>
                     <h3>{{ agent.display_name }}</h3>
                     <div class="role-price">Charge: {{ agent.price_tier }}</div>
-                    <p>{{ agent.squad | upper }} squad agent handling specialized tasks for your clients.</p>
+                    <p>{{ agent.description }}</p>
                 </div>
                 {% endfor %}
             </div>

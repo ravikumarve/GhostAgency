@@ -70,10 +70,41 @@ def get_squad_data() -> list[dict]:
     return [{"name": name, "count": count} for name, count in sorted(squad_counts.items())]
 
 
+SQUAD_ICONS = {
+    "support": "🎧",
+    "sales": "📈",
+    "content": "📱",
+    "ops": "⚙️",
+    "data": "📊",
+    "dev": "💻",
+    "finance": "💰",
+    "hr": "👥",
+    "legal": "⚖️",
+    "custom": "🛠️",
+}
+
+SQUAD_DESCRIPTIONS = {
+    "support": "Handles tickets, emails, and live chat 24/7 based on your client's knowledge base.",
+    "sales": "Qualifies inbound leads, handles personalized outreach, and books meetings directly.",
+    "content": "Generates brand-aligned social posts, SEO blog content, and schedules distribution.",
+    "ops": "Manages complex scheduling, project routing, and cross-department workflows.",
+    "data": "Runs analytics, builds reports, and extracts insights from your client's data.",
+    "dev": "Reviews code, debugs issues, and assists with development workflows.",
+    "finance": "Processes invoices, tracks expenses, and manages bookkeeping tasks.",
+    "hr": "Handles recruiting, onboarding, and employee culture initiatives.",
+    "legal": "Reviews contracts, ensures compliance, and manages NDAs.",
+    "custom": "Performs specialized tasks configured for unique client needs.",
+}
+
+
 @router.get("/")
 async def landing_page(request: Request):
     """Landing page (root)."""
     real_agents = get_real_agent_data()
+    for agent in real_agents:
+        squad = agent.get("squad", "custom")
+        agent["icon"] = SQUAD_ICONS.get(squad, "🤖")
+        agent["description"] = SQUAD_DESCRIPTIONS.get(squad, "Specialized AI agent for your clients.")
     context = {
         "request": request,
         "total_agents": len(AGENT_REGISTRY),

@@ -807,47 +807,50 @@ a:focus-visible {
     line-height: 1.6;
 }
 
-/* Role Cards (Workforce) */
+/* Role Cards (Workforce) — sleek compact design */
 .role-card {
     background: var(--surface-dark);
     border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    padding: 2.5rem;
+    border-radius: 16px;
+    padding: 1.5rem;
     transition: all 0.3s ease;
 }
 
 .role-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     border-color: var(--accent-gold);
     background: rgba(245, 158, 11, 0.03);
 }
 
 .role-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    line-height: 1;
 }
 
 .role-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
     font-family: 'Archivo Black', sans-serif;
+    line-height: 1.3;
 }
 
 .role-price {
     display: inline-block;
-    padding: 0.3rem 0.8rem;
+    padding: 0.2rem 0.6rem;
     background: rgba(16, 185, 129, 0.1);
     color: var(--accent-success);
-    border-radius: 6px;
-    font-size: 0.85rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .role-card p {
     color: var(--text-dim);
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 0.9rem;
 }
 
 /* Advantage Grid */
