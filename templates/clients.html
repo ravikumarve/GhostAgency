@@ -3,80 +3,42 @@
 {% block title %}Client Management - Ghost Agency{% endblock %}
 
 {% block content %}
+{% import "macros/cards.html" as cards %}
 <h2 class="card-header mb-2">CLIENT MANAGEMENT</h2>
 
 <!-- Client Stats -->
 <div class="grid grid-4 mb-2">
-    <div class="card">
-        <div class="card-header">TOTAL CLIENTS</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ clients|length }}
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">ACTIVE CLIENTS</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ active_clients }}
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">TRIAL CLIENTS</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ trial_clients }}
-        </div>
-    </div>
+    {{ cards.stat_card("TOTAL CLIENTS", clients|length) }}
+    {{ cards.stat_card("ACTIVE CLIENTS", active_clients) }}
+    {{ cards.stat_card("TRIAL CLIENTS", trial_clients) }}
     <div class="card">
         <div class="card-header">REVENUE</div>
-        <div class="text-center" style="font-size: 1.5rem; font-family: 'JetBrains Mono';">
-            ${{ "%.2f"|format(total_revenue) }}
-        </div>
+        <div class="text-center text-mono-lg">${{ "%.2f"|format(total_revenue) }}</div>
     </div>
 </div>
 
 <!-- Clients Table -->
-<div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>CLIENT NAME</th>
-                <th>PLAN</th>
-                <th>AGENTS</th>
-                <th>STATUS</th>
-                <th>CREATED</th>
-                <th>ACTIONS</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for client in clients %}
-            <tr>
-                <td>{{ client.name }}</td>
-                <td>{{ client.plan|upper }}</td>
-                <td>{{ client.agent_count }}</td>
-                <td>
-                    {% if client.status == "active" %}
-                    <span class="status status-online">ACTIVE</span>
-                    {% elif client.status == "trial" %}
-                    <span class="status status-warning">TRIAL</span>
-                    {% else %}
-                    <span class="status status-offline">INACTIVE</span>
-                    {% endif %}
-                </td>
-                <td>{{ client.created_date }}</td>
-                <td>
-                    <button class="btn">VIEW</button>
-                    <button class="btn btn-blue">EDIT</button>
-                    <button class="btn btn-red">DELETE</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% call cards.glass_table(['CLIENT NAME', 'PLAN', 'AGENTS', 'STATUS', 'CREATED', 'ACTIONS']) %}
+{% for client in clients %}
+<tr>
+    <td>{{ client.name }}</td>
+    <td>{{ client.plan|upper }}</td>
+    <td>{{ client.agent_count }}</td>
+    <td>{{ cards.status_badge(client.status) }}</td>
+    <td>{{ client.created_date }}</td>
+    <td>
+        <button class="btn">VIEW</button>
+        <button class="btn btn-blue">EDIT</button>
+        <button class="btn btn-red">DELETE</button>
+    </td>
+</tr>
+{% endfor %}
+{% endcall %}
 
 <!-- Add Client Form -->
 <div class="card mt-1">
     <div class="card-header">ADD NEW CLIENT</div>
-    <form method="POST" action="/clients/add" style="margin-top: 1rem;">
+    <form method="POST" action="/clients/add" class="mt-1">
         <div class="grid grid-3">
             <div class="form-group">
                 <label class="form-label">CLIENT NAME</label>
