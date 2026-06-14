@@ -443,6 +443,51 @@ footer span {
     color: var(--white);
 }
 
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+/* Focus-visible: keyboard-only focus rings */
+.btn:focus-visible,
+.nav-link:focus-visible,
+.form-input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
+}
+
+/* Prevent focus ring on mouse clicks (keep :focus-visible only) */
+.btn:focus:not(:focus-visible),
+.nav-link:focus:not(:focus-visible),
+.form-input:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Reduced motion: disable all animations */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .card:hover,
+    .btn:hover,
+    .btn-primary:hover,
+    .nav-link:hover,
+    .role-card:hover {
+        transform: none !important;
+    }
+
+    .terminal-box::before {
+        animation: none !important;
+    }
+}
+
 /* UTILITY CLASSES */
 .text-center { text-align: center; }
 .text-right { text-align: right; }
