@@ -1,36 +1,42 @@
+"""OpenAI provider — GPT-4o, GPT-4, GPT-3.5, and compatible endpoints."""
+
 from __future__ import annotations
 
 import requests
 
 from ghostagency.core.exceptions import LLMConnectionError, LLMTimeoutError
 from ghostagency.core.config import (
-    NIM_BASE_URL,
-    DEFAULT_MODEL,
-    NIM_API_KEY,
-    NIM_TIMEOUT,
+    OPENAI_API_KEY,
+    OPENAI_BASE_URL,
+    OPENAI_MODEL,
+    OPENAI_TIMEOUT,
     GHOST_MAX_RETRIES,
 )
 from ghostagency.integrations.providers.base import LLMProvider
 
 
-class NIMClient(LLMProvider):
-    """NVIDIA NIM API client — primary LLM backend for all Ghost Agency agents."""
+class OpenAIProvider(LLMProvider):
+    """OpenAI-compatible chat completions provider.
+
+    Works with:
+      - OpenAI API (api.openai.com)
+      - Any OpenAI-compatible endpoint (Together AI, Groq, OpenRouter, etc.)
+    Set OPENAI_BASE_URL to redirect to a compatible third-party.
+    """
 
     def __init__(self, model: str | None = None) -> None:
-        self.model = model or DEFAULT_MODEL
-        self.base_url = NIM_BASE_URL
+        self.model = model or OPENAI_MODEL
+        self.base_url = OPENAI_BASE_URL
         self.headers = {
-            "Authorization": f"Bearer {NIM_API_KEY}",
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
         }
 
     def ping(self) -> str:
-        """Verify NIM connectivity."""
-        resp = self.complete("Say: NIM OK")
+        resp = self.complete("Respond with exactly: OK")
         return resp
 
     def complete(self, prompt: str, system: str = "", max_tokens: int = 1024) -> str:
-        """Single-turn completion. Retries up to MAX_RETRIES."""
         messages = []
         if system:
             messages.append({"role": "system", "content": system})
@@ -46,23 +52,32 @@ class NIMClient(LLMProvider):
                         "messages": messages,
                         "max_tokens": max_tokens,
                     },
-                    timeout=NIM_TIMEOUT,
+                    timeout=OPENAI_TIMEOUT,
                 )
+
+                if response.status_code == 401:
+                    raise LLMConnectionError(
+                        "OpenAI authentication failed: Invalid API key"
+                    )
+
                 response.raise_for_status()
                 return response.json()["choices"][0]["message"]["content"].strip()
 
             except requests.Timeout:
                 if attempt == GHOST_MAX_RETRIES - 1:
                     raise LLMTimeoutError(
-                        f"NIM timeout after {NIM_TIMEOUT}s on attempt {attempt + 1}"
+                        f"OpenAI timeout after {OPENAI_TIMEOUT}s on attempt {attempt + 1}"
                     )
 
             except (requests.ConnectionError, requests.HTTPError) as e:
-                if hasattr(e, "response") and e.response.status_code == 403:
-                    raise LLMConnectionError("NIM authentication failed: Invalid API key")
-                raise LLMConnectionError(f"NIM connection failed: {e}")
+                if isinstance(e, requests.HTTPError):
+                    if e.response.status_code == 401:
+                        raise LLMConnectionError(
+                            "OpenAI authentication failed: Invalid API key"
+                        )
+                raise LLMConnectionError(f"OpenAI connection failed: {e}")
 
             except (KeyError, IndexError) as e:
-                return f"ERROR: Unexpected NIM response format: {e}"
+                return f"ERROR: Unexpected OpenAI response format: {e}"
 
         return "ERROR: Max retries exceeded"

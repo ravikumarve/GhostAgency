@@ -1,23 +1,40 @@
+"""Ollama provider — local LLM fallback for CPU-only mode."""
+
 from __future__ import annotations
 
 import requests
 
 from ghostagency.core.exceptions import LLMConnectionError
 from ghostagency.core.config import OLLAMA_URL, OLLAMA_TIMEOUT
+from ghostagency.integrations.providers.base import LLMProvider
 
 
-class OllamaFallbackClient:
-    """Fallback to local Ollama when NIM is unavailable (CPU-only mode)."""
+class OllamaFallbackClient(LLMProvider):
+    """Local Ollama provider (CPU-friendly fallback)."""
 
-    def __init__(self, base_url: str | None = None) -> None:
-        self.base_url = base_url or OLLAMA_URL
+    def __init__(self, model: str | None = None) -> None:
+        self.base_url = OLLAMA_URL
+        self.default_model = model or "phi3:mini"
 
-    def complete(self, prompt: str, model: str = "phi3:mini") -> str:
-        """Single-turn completion using Ollama."""
+    def ping(self) -> str:
+        resp = self.complete("Respond with exactly: OK")
+        return resp
+
+    def complete(
+        self, prompt: str, system: str = "", max_tokens: int = 1024
+    ) -> str:
+        """Single-turn completion using Ollama generate endpoint."""
         try:
+            full_prompt = f"{system}\n\n{prompt}" if system else prompt
+
             response = requests.post(
                 self.base_url,
-                json={"model": model, "prompt": prompt, "stream": False},
+                json={
+                    "model": self.default_model,
+                    "prompt": full_prompt,
+                    "stream": False,
+                    "options": {"num_predict": max_tokens},
+                },
                 timeout=OLLAMA_TIMEOUT,
             )
 

@@ -5,9 +5,7 @@ import os
 
 from ghostagency.core.config import DEFAULT_MODEL
 from ghostagency.core.logger import get_logger
-from ghostagency.core.exceptions import LLMConnectionError
-from ghostagency.integrations.nim_client import NIMClient
-from ghostagency.integrations.ollama_fallback import OllamaFallbackClient
+from ghostagency.integrations.llm_client import get_llm_client
 
 
 class AIAgent(ABC):
@@ -46,17 +44,16 @@ class AIAgent(ABC):
         ...
 
     def _call_llm(self, prompt: str, model: str | None = None) -> str:
-        """NIM primary → Ollama fallback → Mock."""
+        """Provider-agnostic LLM call with automatic chain fallback.
+
+        Uses the provider factory which chains through available providers
+        (OpenAI → Anthropic → Gemini → NIM → Ollama) on connection failure.
+        """
         if os.getenv("GHOST_MOCK_AI") == "true":
             return f"[MOCK] Response for: {prompt[:50]}"
 
-        try:
-            client = NIMClient(model=model or self.model)
-            return client.complete(prompt, system=self.get_role_prompt())
-        except LLMConnectionError:
-            # Fallback to Ollama (CPU-only machines)
-            fallback = OllamaFallbackClient()
-            return fallback.complete(prompt, model="phi3:mini")
+        client = get_llm_client(model=model or self.model)
+        return client.complete(prompt, system=self.get_role_prompt())
 
     def _log_interaction(self, action: str, input: str, output: str) -> None:
         """Shared structured JSON logger. Never override."""

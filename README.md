@@ -52,8 +52,8 @@ Client → Agent Registry → AI Agent → Knowledge Base → LLM → Response
 ```
 
 | Layer | Technology |
-|---|---|
-| LLM | NVIDIA NIM (GLM 5.1) primary · Ollama fallback |
+|---|---|---|
+| LLM | OpenAI (default) · Anthropic · Gemini · NVIDIA NIM · Ollama |
 | API | FastAPI · REST · async |
 | Auth | License key + API key middleware |
 | Rate limiting | In-memory per-key throttling |
@@ -62,13 +62,14 @@ Client → Agent Registry → AI Agent → Knowledge Base → LLM → Response
 
 ### Config
 
-All via `.env`:
+Select provider via `LLM_PROVIDER` env var. Example switching to Anthropic:
 
 ```env
-NIM_API_KEY=your_key_here
-OLLAMA_URL=http://localhost:11434/api/generate
-GHOST_MOCK_AI=false
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+See [.env.example](.env.example) for all options.
 
 ---
 
