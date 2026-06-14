@@ -1,3 +1,24 @@
+### [2026-06-14 17:00] - Settings Page with SQLite Persistence
+- **State**: Success ✅
+- **MCP Data Used**: Direct file reads (dashboard.py, base.html, brutalist.css, existing templates)
+- **Agents Deployed**: @codebase (direct execution — 3 new files, 4 modified)
+- **Architectural Decision**:
+  - Created `core/settings_db.py` — SQLite key-value store with `get()`, `set()`, `set_many()`, `get_effective()` (DB overrides env vars)
+  - Settings page at `/settings` with 4 CSS-only tabs (LLM Provider, Agent Runtime, Notifications, Billing & License)
+  - Glass Brutalism design — uses existing `.form-group`, `.form-input`, `.btn-blue` classes, no new CSS
+  - Form POST writes to SQLite DB; GET reads DB with env var fallback
+  - Added `python-multipart` dependency for form parsing
+- **Files Created** (3):
+  - `core/settings_db.py` — SQLite settings store (thread-safe, WAL mode)
+  - `templates/settings.html` — Settings page with CSS tab system
+  - `tests/test_settings.py` — 16 tests
+- **Files Modified** (4):
+  - `api/routes/dashboard.py` — added `GET /settings` and `POST /settings` routes
+  - `templates/base.html` — added SETTINGS nav link
+  - `requirements.txt` — added `python-multipart`
+- **Quality Gate**: 91/91 tests passed (75 existing + 16 new) ✅ | flake8 clean ✅
+- **Next Turn Directive**: Settings page ready. Next: wire runtime config to use settings_db overrides in provider factory and base_agent.
+
 ### [2026-06-14 16:30] - Multi-Provider LLM Support — OpenAI, Anthropic, Gemini
 - **State**: Success ✅
 - **MCP Data Used**: Direct file reads (existing provider clients, config, base_agent), grep (import references)
