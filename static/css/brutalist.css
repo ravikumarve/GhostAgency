@@ -427,6 +427,18 @@ footer span {
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-left { text-align: left; }
+.text-hero { font-size: 2rem; font-family: 'Archivo Black', sans-serif; }
+.text-mono-hero { font-size: 2rem; font-family: 'JetBrains Mono', monospace; }
+.text-mono-lg { font-size: 1.5rem; font-family: 'JetBrains Mono', monospace; }
+.text-mono { font-family: 'JetBrains Mono', monospace; }
+.text-dim { color: var(--text-dim); }
+
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: 1rem; }
+.align-end { align-self: end; }
 
 .mb-1 { margin-bottom: 1rem; }
 .mb-2 { margin-bottom: 2rem; }
