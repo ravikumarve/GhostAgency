@@ -70,6 +70,22 @@ def get_squad_data() -> list[dict]:
     return [{"name": name, "count": count} for name, count in sorted(squad_counts.items())]
 
 
+@router.get("/landing")
+async def landing_page(request: Request):
+    """Landing page."""
+    real_agents = get_real_agent_data()
+    context = {
+        "request": request,
+        "total_agents": len(AGENT_REGISTRY),
+        "agents": simplify_for_template(real_agents),
+    }
+    template = templates.get_template("landing.html")
+    content = template.render(**context)
+    from starlette.responses import HTMLResponse
+
+    return HTMLResponse(content)
+
+
 @router.get("/")
 async def dashboard(request: Request):
     """Main dashboard page."""

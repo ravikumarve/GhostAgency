@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Agency | High-Margin AI Workforce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/brutalist.css">
+</head>
+<body>
+
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div class="landing-container">
+        <!-- Navigation -->
+        <nav>
+            <a href="/" class="logo" style="display: flex; align-items: center; gap: 12px;">
+                <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4));">
+                    <defs>
+                        <linearGradient id="ghost-core" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fbbf24" />
+                            <stop offset="50%" stop-color="#f59e0b" />
+                            <stop offset="100%" stop-color="#ef4444" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 4L6 10V22C6 29.5 12 34.5 20 38C28 34.5 34 29.5 34 22V10L20 4Z" stroke="url(#ghost-core)" stroke-width="2.5" stroke-linejoin="round" fill="rgba(245, 158, 11, 0.05)"/>
+                    <path d="M20 12L13 16.5V23.5L20 28L27 23.5V16.5L20 12Z" fill="url(#ghost-core)" opacity="0.9"/>
+                    <path d="M20 16L17 18.5V21.5L20 24L23 21.5V18.5L20 16Z" fill="#050507"/>
+                    <circle cx="20" cy="20" r="1.5" fill="url(#ghost-core)"/>
+                </svg>
+                <span style="font-family: 'Archivo Black', sans-serif; font-size: 1.3rem;">GHOST AGENCY</span>
+            </a>
+            <div class="nav-links flex flex-center gap-1">
+                <a href="#economics" class="nav-link">ECONOMICS</a>
+                <a href="#guide" class="nav-link">QUICK START</a>
+                <a href="#workforce" class="nav-link">WORKFORCE</a>
+                <a href="/" class="btn btn-primary">DASHBOARD</a>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    95% Profit Margins • Zero Coding Required
+                </div>
+                <h1>Deploy Your <br><span class="gradient-text">Invisible Workforce</span>.</h1>
+                <p>Stop selling software subscriptions. Start renting specialized AI employees to businesses for $500–$2,500/month. Your actual API cost? Roughly $8/month per client.</p>
+                <div class="flex flex-wrap gap-1">
+                    <a href="https://gumroad.com" class="btn btn-primary">Start Your Agency</a>
+                    <a href="#guide" class="btn btn-outline">How it Works</a>
+                </div>
+            </div>
+
+            <div class="terminal-box">
+                <div class="term-header">
+                    <div class="term-dot"></div>
+                    <div class="term-dot"></div>
+                    <div class="term-dot"></div>
+                </div>
+                <div class="term-body">
+                    <div class="term-comment"># Deploy a customer support agent for a client</div>
+                    <div><span class="term-cmd">python ghostagency/deploy.py --agent="support"</span></div>
+                    <br>
+                    <div class="term-sys">&gt; Initializing Ghost Registry...</div>
+                    <div class="term-sys">&gt; Loading NVIDIA NIM environment...</div>
+                    <div class="term-success">✓ Support Agent deployed successfully.</div>
+                    <div class="term-comment" style="margin-top: 10px;">Status: Online 24/7</div>
+                    <div class="term-comment">Client Billing: Active ($800/mo)</div>
+                    <div class="term-comment">Compute Cost: $0.26/day</div>
+                    <br>
+                    <div class="term-sys">_</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Economics -->
+        <section class="section" id="economics">
+            <div class="economics-grid">
+                <div>
+                    <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.03em; line-height: 1.1;">This isn't a side hustle.<br>It's a <span class="gradient-text">Proper Agency</span>.</h2>
+                    <p style="color: var(--text-dim); font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem;">
+                        Imagine a small business paying you $800/month for a customer support agent. The AI handles tickets, emails, and live chat 24/7.
+                    </p>
+                    <p style="color: var(--text-dim); font-size: 1.2rem; line-height: 1.7;">
+                        Your actual monthly cost to run this AI (via NVIDIA NIM or local Ollama) is around $8. You provide a massive labor replacement at a fraction of the human cost, while retaining an incredible profit margin.
+                    </p>
+                </div>
+
+                <div class="math-card">
+                    <div class="math-row">
+                        <span class="math-label">What you charge client:</span>
+                        <span class="math-val">$800<span class="text-dim" style="font-size: 1rem; font-weight: 400;">/mo</span></span>
+                    </div>
+                    <div class="math-row">
+                        <span class="math-label">Your actual API cost:</span>
+                        <span class="math-val" style="color: var(--accent-flame);">-$8<span class="text-dim" style="font-size: 1rem; font-weight: 400;">/mo</span></span>
+                    </div>
+                    <div class="math-row">
+                        <span class="math-label">Your Gross Profit:</span>
+                        <span class="math-profit">$792<span style="font-size: 1.2rem; color: var(--accent-success); font-weight: 600;">/mo</span></span>
+                    </div>
+                    <div class="text-center text-dim" style="margin-top: 1.5rem; font-size: 0.9rem;">
+                        *Calculations based on 1 deployed AI Support Agent
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="section" id="guide">
+            <div class="section-header">
+                <h2>10 Minutes to Your <br><span class="gradient-text">First Employee</span></h2>
+                <p>Designed for complete beginners. No technical experience required to launch your first client.</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="step-number">1</div>
+                    <h3>Watch the Demo</h3>
+                    <p>Run the included one-line command to launch the <code class="mono">run_demo.py</code> script. Watch the AI agents interact in a simulated environment to understand their capabilities instantly.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">2</div>
+                    <h3>Pick an AI Employee</h3>
+                    <p>Select one of the <strong>{{ total_agents }}</strong> pre-configured roles from the Ghost Registry. We highly recommend starting with the <strong>Support Agent</strong>, as it is the easiest service to sell to local businesses.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">3</div>
+                    <h3>Find Your First Client</h3>
+                    <p>Target e-commerce stores with high ticket volume, local businesses needing 24/7 support, or other agencies that need additional white-labeled capacity.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">4</div>
+                    <h3>Deploy &amp; Profit</h3>
+                    <p>Charge a standard retainer of $800/month. The client saves thousands compared to hiring a human, and you keep a 95%+ profit margin running the AI.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workforce -->
+        <section class="section" id="workforce">
+            <div class="section-header">
+                <h2>Meet Your <span class="gradient-text">Workforce</span></h2>
+                <p>Start with {{ total_agents }} specialized employees. The underlying registry is architected to scale to 156+ specialized roles. New agents are added weekly.</p>
+            </div>
+
+            <div class="grid-4">
+                {% for agent in agents %}
+                <div class="role-card">
+                    <div class="role-icon">{{ agent.icon | default('🤖') }}</div>
+                    <h3>{{ agent.display_name }}</h3>
+                    <div class="role-price">Charge: {{ agent.price_tier }}</div>
+                    <p>{{ agent.squad | upper }} squad agent handling specialized tasks for your clients.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Advantages -->
+        <section class="section" id="advantages">
+            <div class="section-header">
+                <h2>Why This <span class="gradient-text">Works</span></h2>
+                <p>The unit economics of an AI agency completely shatter traditional business models.</p>
+            </div>
+
+            <div class="advantage-grid">
+                <div class="adv-card">
+                    <h4>24/7 Availability</h4>
+                    <p>Your employees never sleep, never take sick days, and never ask for raises. They provide consistent, professional service around the clock.</p>
+                </div>
+                <div class="adv-card">
+                    <h4>Zero Overhead</h4>
+                    <p>No office space, no equipment to purchase, no health benefits, and no HR management required. Your only overhead is compute costs.</p>
+                </div>
+                <div class="adv-card">
+                    <h4>Instant Scaling</h4>
+                    <p>Sign a new client today, deploy a new employee today. You can scale your agency to 50 clients without needing to interview a single human.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROI Table -->
+        <section class="section" id="roi">
+            <div class="section-header">
+                <h2>Scale Without <span class="gradient-text">Hiring</span></h2>
+                <p>Calculate your potential monthly recurring revenue (MRR) based on an average $1,000/month retainer per client.</p>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Clients Deployed</th>
+                            <th>Monthly Revenue</th>
+                            <th>Your Compute Cost</th>
+                            <th>Your Net Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>5 Clients</td><td>$5,000</td><td>$40</td><td class="highlight">$4,960</td></tr>
+                        <tr><td>10 Clients</td><td>$10,000</td><td>$80</td><td class="highlight">$9,920</td></tr>
+                        <tr><td>20 Clients</td><td>$20,000</td><td>$160</td><td class="highlight">$19,840</td></tr>
+                        <tr><td>50 Clients</td><td>$50,000</td><td>$400</td><td class="highlight">$49,600</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section" id="start">
+            <h2>Turn AI into your <br><span class="gradient-text">Invisible Workforce</span>.</h2>
+            <p>Get full access to the Ghost Agency platform, the FastAPI backend, {{ total_agents }} pre-built AI employees, and the complete agency business plan today.</p>
+            <a href="https://gumroad.com" class="btn btn-primary" style="font-size: 1.2rem; padding: 1.2rem 3.5rem;">Purchase on Gumroad</a>
+            <div class="mono text-dim" style="margin-top: 2rem; font-size: 0.9rem;">
+                Includes NVIDIA NIM &amp; Ollama support out of the box.
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <div>
+                <div class="footer-logo">
+                    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="ghost-core-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fbbf24" />
+                                <stop offset="50%" stop-color="#f59e0b" />
+                                <stop offset="100%" stop-color="#ef4444" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M20 4L6 10V22C6 29.5 12 34.5 20 38C28 34.5 34 29.5 34 22V10L20 4Z" stroke="url(#ghost-core-footer)" stroke-width="2.5" stroke-linejoin="round" fill="rgba(245, 158, 11, 0.05)"/>
+                        <path d="M20 12L13 16.5V23.5L20 28L27 23.5V16.5L20 12Z" fill="url(#ghost-core-footer)" opacity="0.9"/>
+                        <path d="M20 16L17 18.5V21.5L20 24L23 21.5V18.5L20 16Z" fill="#050507"/>
+                        <circle cx="20" cy="20" r="1.5" fill="url(#ghost-core-footer)"/>
+                    </svg>
+                    <span style="font-family: 'Archivo Black', sans-serif;">GHOST AGENCY</span>
+                </div>
+                <p class="text-dim" style="max-width: 300px; line-height: 1.6;">
+                    Rent specialized AI employees to businesses. Keep 95% profit margins. Built for modern entrepreneurs.
+                </p>
+                <div class="mono text-dim" style="margin-top: 2rem; font-size: 0.85rem;">
+                    &copy; 2026 Ghost Agency. All rights reserved.
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h5>Platform</h5>
+                <ul>
+                    <li><a href="#economics">Economics</a></li>
+                    <li><a href="#workforce">AI Employees</a></li>
+                    <li><a href="#roi">ROI Calculator</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h5>Resources</h5>
+                <ul>
+                    <li><a href="#">Business Plan</a></li>
+                    <li><a href="#">Developer Guide</a></li>
+                    <li><a href="https://build.nvidia.com">NVIDIA NIM</a></li>
+                    <li><a href="https://ollama.ai">Ollama Local</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Ember Canvas Animation
+        const canvas = document.getElementById('ember-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            
+            const count = Math.floor((width * height) / 15000);
+            
+            for(let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    color: Math.random() > 0.5 ? '#fbbf24' : '#ef4444',
+                    alpha: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, width, height);
+
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy - 0.2;
+
+                if(p.x < -10) p.x = width + 10;
+                if(p.x > width + 10) p.x = -10;
+                if(p.y < -10) p.y = height + 10;
+                if(p.y > height + 10) p.y = -10;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+
+                for(let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if(dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = p.color;
+                        ctx.globalAlpha = 0.15 - (dist / 800);
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+                    }
+                }
+            });
+        }
+
+        // Respect reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReducedMotion.matches) {
+            window.addEventListener('resize', init);
+            init();
+            animate();
+        } else {
+            // Static fallback for reduced motion
+            canvas.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
