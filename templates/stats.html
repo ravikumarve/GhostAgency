@@ -3,38 +3,19 @@
 {% block title %}Usage Statistics - Ghost Agency{% endblock %}
 
 {% block content %}
+{% import "macros/cards.html" as cards %}
 <h2 class="card-header mb-2">USAGE STATISTICS</h2>
 
 <!-- Summary Cards -->
 <div class="grid grid-4 mb-2">
-    <div class="card">
-        <div class="card-header">TOTAL REQUESTS</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ stats.total_requests }}
-        </div>
-        <div class="text-center data-label">LAST 30 DAYS</div>
-    </div>
+    {{ cards.stat_card("TOTAL REQUESTS", stats.total_requests, "LAST 30 DAYS") }}
     <div class="card">
         <div class="card-header">AVG RESPONSE</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'JetBrains Mono';">
-            {{ "%.2f"|format(stats.avg_response_time) }}s
-        </div>
+        <div class="text-center text-mono-hero">{{ "%.2f"|format(stats.avg_response_time) }}s</div>
         <div class="text-center data-label">P95: {{ "%.2f"|format(stats.p95_response_time) }}s</div>
     </div>
-    <div class="card">
-        <div class="card-header">SUCCESS RATE</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ "%.1f"|format(stats.success_rate * 100) }}%
-        </div>
-        <div class="text-center data-label">{{ stats.failed_requests }} FAILURES</div>
-    </div>
-    <div class="card">
-        <div class="card-header">ESCALATIONS</div>
-        <div class="text-center" style="font-size: 2rem; font-family: 'Archivo Black';">
-            {{ stats.escalations }}
-        </div>
-        <div class="text-center data-label">{{ "%.1f"|format(stats.escalation_rate * 100) }}% RATE</div>
-    </div>
+    {{ cards.stat_card("SUCCESS RATE", "%.1f"|format(stats.success_rate * 100) ~ "%", stats.failed_requests ~ " FAILURES") }}
+    {{ cards.stat_card("ESCALATIONS", stats.escalations, "%.1f"|format(stats.escalation_rate * 100) ~ "% RATE") }}
 </div>
 
 <!-- Time Period Selector -->
@@ -52,11 +33,8 @@
     <!-- Requests Over Time -->
     <div class="card">
         <div class="card-header">REQUESTS OVER TIME</div>
-        <div style="height: 300px; background: #f0f0f0; border: 2px solid #000; margin: 1rem 0;">
-            <!-- Chart would go here -->
-            <div style="padding: 1rem; font-family: 'JetBrains Mono'; text-align: center;">
-                CHART: Requests by hour/day
-            </div>
+        <div class="chart-placeholder">
+            <div class="chart-label">CHART: Requests by hour/day</div>
         </div>
         <div class="data-grid">
             <span class="data-label">PEAK:</span>
@@ -69,11 +47,8 @@
     <!-- Response Time Distribution -->
     <div class="card">
         <div class="card-header">RESPONSE TIME DISTRIBUTION</div>
-        <div style="height: 300px; background: #f0f0f0; border: 2px solid #000; margin: 1rem 0;">
-            <!-- Chart would go here -->
-            <div style="padding: 1rem; font-family: 'JetBrains Mono'; text-align: center;">
-                CHART: Response time histogram
-            </div>
+        <div class="chart-placeholder">
+            <div class="chart-label">CHART: Response time histogram</div>
         </div>
         <div class="data-grid">
             <span class="data-label">P50:</span>
@@ -87,63 +62,35 @@
 </div>
 
 <!-- Squad Performance -->
-<div class="card mt-2">
-    <div class="card-header">SQUAD PERFORMANCE</div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>SQUAD</th>
-                <th>REQUESTS</th>
-                <th>AVG RESPONSE</th>
-                <th>SUCCESS RATE</th>
-                <th>ESCALATIONS</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for squad in squad_performance %}
-            <tr>
-                <td>{{ squad.name|upper }}</td>
-                <td>{{ squad.requests }}</td>
-                <td>{{ "%.2f"|format(squad.avg_response_time) }}s</td>
-                <td>{{ "%.1f"|format(squad.success_rate * 100) }}%</td>
-                <td>{{ squad.escalations }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% call cards.glass_table(['SQUAD', 'REQUESTS', 'AVG RESPONSE', 'SUCCESS RATE', 'ESCALATIONS']) %}
+{% for squad in squad_performance %}
+<tr>
+    <td>{{ squad.name|upper }}</td>
+    <td>{{ squad.requests }}</td>
+    <td>{{ "%.2f"|format(squad.avg_response_time) }}s</td>
+    <td>{{ "%.1f"|format(squad.success_rate * 100) }}%</td>
+    <td>{{ squad.escalations }}</td>
+</tr>
+{% endfor %}
+{% endcall %}
 
 <!-- Top Agents -->
-<div class="card mt-1">
-    <div class="card-header">TOP PERFORMING AGENTS</div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>AGENT</th>
-                <th>SQUAD</th>
-                <th>REQUESTS</th>
-                <th>SUCCESS RATE</th>
-                <th>AVG RESPONSE</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for agent in top_agents %}
-            <tr>
-                <td>{{ agent.name }}</td>
-                <td>{{ agent.squad|upper }}</td>
-                <td>{{ agent.requests }}</td>
-                <td>{{ "%.1f"|format(agent.success_rate * 100) }}%</td>
-                <td>{{ "%.2f"|format(agent.avg_response_time) }}s</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% call cards.glass_table(['AGENT', 'SQUAD', 'REQUESTS', 'SUCCESS RATE', 'AVG RESPONSE']) %}
+{% for agent in top_agents %}
+<tr>
+    <td>{{ agent.name }}</td>
+    <td>{{ agent.squad|upper }}</td>
+    <td>{{ agent.requests }}</td>
+    <td>{{ "%.1f"|format(agent.success_rate * 100) }}%</td>
+    <td>{{ "%.2f"|format(agent.avg_response_time) }}s</td>
+</tr>
+{% endfor %}
+{% endcall %}
 
 <!-- Export Options -->
 <div class="card mt-1">
     <div class="card-header">DATA EXPORT</div>
-    <div class="grid grid-3" style="margin-top: 1rem;">
+    <div class="grid grid-3 mt-1">
         <button class="btn">EXPORT CSV</button>
         <button class="btn">EXPORT JSON</button>
         <button class="btn btn-blue">GENERATE REPORT</button>
