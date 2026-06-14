@@ -468,6 +468,9 @@ footer span {
 .p-1 { padding: 1rem; }
 .p-2 { padding: 2rem; }
 
+.mx-1 { margin-left: 1rem; margin-right: 1rem; }
+.ml-1 { margin-left: 1rem; }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .header-grid {
