@@ -1,0 +1,38 @@
+{% macro stat_card(title, value, subtitle=None) %}
+<div class="card">
+    <div class="card-header">{{ title }}</div>
+    {% if subtitle %}
+    <div class="text-center text-hero">{{ value }}</div>
+    <div class="text-center data-label">{{ subtitle }}</div>
+    {% else %}
+    <div class="text-center text-hero">{{ value }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro status_badge(status) %}
+{% if status == "online" or status == "active" %}
+<span class="status status-online">{{ status|upper }}</span>
+{% elif status == "trial" or status == "warning" %}
+<span class="status status-warning">{{ status|upper }}</span>
+{% else %}
+<span class="status status-offline">{{ status|upper }}</span>
+{% endif %}
+{% endmacro %}
+
+{% macro glass_table(headers) %}
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {{ caller() }}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
