@@ -3,6 +3,7 @@
 {% block title %}Agent Management - Ghost Agency{% endblock %}
 
 {% block content %}
+{% import "macros/cards.html" as cards %}
 <h2 class="card-header mb-2">AGENT MANAGEMENT</h2>
 
 <!-- Search and Filter -->
@@ -29,57 +30,37 @@
                 <option value="offline">OFFLINE</option>
             </select>
         </div>
-        <div class="form-group" style="align-self: end;">
+        <div class="form-group align-end">
             <button class="btn btn-blue">APPLY FILTERS</button>
         </div>
     </div>
 </div>
 
 <!-- Agents Table -->
-<div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>SLUG</th>
-                <th>DISPLAY NAME</th>
-                <th>SQUAD</th>
-                <th>PRICE TIER</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for agent in agents %}
-            <tr>
-                <td>{{ agent.slug }}</td>
-                <td>{{ agent.display_name }}</td>
-                <td>{{ agent.squad|upper }}</td>
-                <td>{{ agent.price_tier }}</td>
-                <td>
-                    {% if agent.status == "online" %}
-                    <span class="status status-online">ONLINE</span>
-                    {% else %}
-                    <span class="status status-offline">OFFLINE</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <button class="btn">VIEW</button>
-                    <button class="btn btn-blue">EDIT</button>
-                    {% if agent.status == "online" %}
-                    <button class="btn btn-red">DISABLE</button>
-                    {% else %}
-                    <button class="btn btn-blue">ENABLE</button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% call cards.glass_table(['SLUG', 'DISPLAY NAME', 'SQUAD', 'PRICE TIER', 'STATUS', 'ACTIONS']) %}
+{% for agent in agents %}
+<tr>
+    <td>{{ agent.slug }}</td>
+    <td>{{ agent.display_name }}</td>
+    <td>{{ agent.squad|upper }}</td>
+    <td>{{ agent.price_tier }}</td>
+    <td>{{ cards.status_badge(agent.status) }}</td>
+    <td>
+        <button class="btn">VIEW</button>
+        <button class="btn btn-blue">EDIT</button>
+        {% if agent.status == "online" %}
+        <button class="btn btn-red">DISABLE</button>
+        {% else %}
+        <button class="btn btn-blue">ENABLE</button>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+{% endcall %}
 
 <!-- Pagination -->
 <div class="card mt-1">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="flex-between">
         <span class="data-label">SHOWING {{ agents|length }} OF {{ total_agents }} AGENTS</span>
         <div>
             <button class="btn">PREV</button>
