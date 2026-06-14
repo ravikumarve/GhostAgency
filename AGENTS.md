@@ -1,3 +1,40 @@
+### [2026-06-14 16:00] - Glass Brutalism UI Redesign — Full Implementation
+- **State**: Success ✅
+- **MCP Data Used**: Direct file reads (templates, CSS, landing pages)
+- **Agents Deployed**: @codebase (direct execution — 13 commits)
+- **Architectural Decision**:
+  - Root route `/` now serves landing page; `/dashboard` serves the dashboard
+  - Created reusable Jinja2 macros in `templates/macros/cards.html` (stat_card, status_badge, glass_table)
+  - Added `btn-blue`, `btn-red` CSS variants for consistent button styling
+  - Moved all inline styles → CSS utility classes (zero inline styles in all templates)
+  - Landing page built from Landing-2 design with ember canvas, shares design tokens with dashboard
+  - Accessibility: `prefers-reduced-motion` disables all animations; `:focus-visible` keyboard states on all interactive elements
+- **Files Created**:
+  - `templates/macros/cards.html` — Jinja2 macro library
+  - `templates/landing.html` — Glass Brutalism landing page
+- **Files Modified**:
+  - `static/css/brutalist.css` — btn variants, utility classes, landing components, a11y
+  - `templates/index.html`, `agents.html`, `clients.html`, `stats.html`, `base.html` — macro refactor, inline style cleanup
+  - `ghostagency/api/routes/dashboard.py` — added `/landing` → `/dashboard` route swap
+  - `tests/test_dashboard.py`, `tests/test_dashboard_integration.py` — updated for route change, added landing page test
+- **Quality Gate**: 51/51 tests passed ✅ | All routes return 200 ✅
+- **Next Turn Directive**: No remaining debt from this sprint. Ready for new feature work.
+
+### [2026-06-13 20:30] - Sprint UI-Redesign-Analysis (Landing Page Evaluation)
+- **State**: Analysis Complete — Handoff Ready
+- **MCP Data Used**: Direct file reads (webpages/GA landing-1.html, GA landing-2.html), code_tree for dashboard template structure
+- **Agents Deployed**: @orchestrator (direct analysis)
+- **Architectural Decision**: Selected **Landing-2 (Glass/Interactive)** as foundation for "Glass Brutalism" design system. Its component library (`.role-card`, `.math-card`, `.table-wrapper`, `.terminal-box`) maps 1:1 to dashboard needs. Landing-1 (Cinematic/Editorial) relegated to pitch deck use.
+- **Key Findings**:
+  - Both pages use identical Void + Gold/Amber/Flame palette
+  - Landing-2 adds `--accent-success` (#10b981) matching dashboard profit semantics
+  - Landing-2's card system = reusable Jinja2 macros for index/agents/stats/clients
+  - Landing-2's terminal demo proves product works (critical for technical buyers)
+  - Landing-2 follows proven SaaS conversion funnel (Hero → Economics → Quick Start → Workforce → Advantages → ROI → CTA)
+- **Implementation Plan**: 5 phases (Design Tokens → Jinja2 Macros → Dashboard Refactor → Landing Template → Polish) = ~7.5 hrs
+- **Handoff Created**: New session with full plan for @codebase agent
+- **Next Turn Directive**: @codebase to execute Phase 1-2 (design tokens + macros), then Phase 3 (dashboard template refactor)
+
 ### [2026-04-20 21:30] - Sprint Gumroad-Packaging (Git Push + Finalize)
 - **State**: Success ✅ (all changes pushed to GitHub main, quality gates green)
 - **MCP Data Used**: envsitter (key blanking + verification), grep (path sweep), git (push + verify)
