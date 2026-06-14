@@ -557,6 +557,19 @@ a:focus-visible {
     padding: 0.5rem 1rem;
 }
 
+/* Ember Canvas — fixed background particle effect */
+#ember-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.8;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.05), transparent 50%);
+}
+
 /* Gradient Text */
 .gradient-text {
     background: linear-gradient(135deg, var(--accent-gold), var(--accent-flame));
