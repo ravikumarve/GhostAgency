@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+{% block title %}Settings — Ghost Agency{% endblock %}
+{% block head %}
+<style>
+/* Settings tab system — CSS-only radio toggle */
+.settings-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border-glass);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+.settings-tabs label {
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.settings-tabs label:hover {
+    color: var(--text-bright);
+}
+.settings-panel {
+    display: none;
+}
+#tab-llm:checked ~ #panel-llm,
+#tab-agent:checked ~ #panel-agent,
+#tab-notify:checked ~ #panel-notify,
+#tab-billing:checked ~ #panel-billing {
+    display: block;
+}
+#tab-llm:checked ~ .settings-tabs label[for="tab-llm"],
+#tab-agent:checked ~ .settings-tabs label[for="tab-agent"],
+#tab-notify:checked ~ .settings-tabs label[for="tab-notify"],
+#tab-billing:checked ~ .settings-tabs label[for="tab-billing"] {
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+.settings-section h3 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-glass);
+}
+.settings-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+.save-banner {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid var(--accent-success);
+    color: var(--accent-success);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.settings-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-glass);
+}
+.tooltip {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    margin-left: 0.5rem;
+}
+@media (max-width: 700px) {
+    .settings-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="text-hero" style="margin-bottom: 0.5rem;">SETTINGS</h2>
+<p class="text-dim" style="margin-bottom: 2rem;">Configure providers, agent behavior, notifications, and billing.</p>
+
+{% if saved %}
+<div class="save-banner">✓ SETTINGS SAVED</div>
+{% endif %}
+
+<form method="POST" action="/settings">
+
+<input type="radio" name="__tab" id="tab-llm" checked hidden>
+<input type="radio" name="__tab" id="tab-agent" hidden>
+<input type="radio" name="__tab" id="tab-notify" hidden>
+<input type="radio" name="__tab" id="tab-billing" hidden>
+
+<div class="settings-tabs">
+    <label for="tab-llm">LLM Provider</label>
+    <label for="tab-agent">Agent Runtime</label>
+    <label for="tab-notify">Notifications</label>
+    <label for="tab-billing">Billing &amp; License</label>
+</div>
+
+{# ──────── Tab 1: LLM Provider ──────── #}
+<div id="panel-llm" class="settings-panel">
+    <div class="settings-section">
+        <h3>Primary Provider</h3>
+        <div class="settings-row">
+            <label class="form-label" for="llm_provider">Provider</label>
+            <select name="llm_provider" id="llm_provider" class="form-input">
+                <option value="openai" {% if settings.get("llm_provider") == "openai" %}selected{% endif %}>OpenAI (GPT-4o, GPT-4, GPT-3.5)</option>
+                <option value="anthropic" {% if settings.get("llm_provider") == "anthropic" %}selected{% endif %}>Anthropic (Claude 3.5 Sonnet, Haiku)</option>
+                <option value="gemini" {% if settings.get("llm_provider") == "gemini" %}selected{% endif %}>Google Gemini (Gemini 1.5 Pro, Flash)</option>
+                <option value="nim" {% if settings.get("llm_provider") == "nim" %}selected{% endif %}>NVIDIA NIM (testing/internal)</option>
+                <option value="ollama" {% if settings.get("llm_provider") == "ollama" %}selected{% endif %}>Ollama (local, CPU)</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="llm_model">Default Model</label>
+            <input class="form-input" type="text" name="llm_model" id="llm_model"
+                   value="{{ settings.get('llm_model', 'gpt-4o') }}" placeholder="gpt-4o">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>OpenAI <span class="tooltip">default provider</span></h3>
+        <div class="settings-row">
+            <label class="form-label" for="openai_api_key">API Key</label>
+            <input class="form-input" type="password" name="openai_api_key" id="openai_api_key"
+                   value="{{ settings.get('openai_api_key', '') }}" placeholder="sk-...">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="openai_model">Model</label>
+            <input class="form-input" type="text" name="openai_model" id="openai_model"
+                   value="{{ settings.get('openai_model', 'gpt-4o') }}" placeholder="gpt-4o">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="openai_base_url">Base URL</label>
+            <input class="form-input" type="text" name="openai_base_url" id="openai_base_url"
+                   value="{{ settings.get('openai_base_url', 'https://api.openai.com/v1') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="openai_timeout">Timeout (s)</label>
+            <input class="form-input" type="number" name="openai_timeout" id="openai_timeout"
+                   value="{{ settings.get('openai_timeout', '60') }}">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Anthropic</h3>
+        <div class="settings-row">
+            <label class="form-label" for="anthropic_api_key">API Key</label>
+            <input class="form-input" type="password" name="anthropic_api_key" id="anthropic_api_key"
+                   value="{{ settings.get('anthropic_api_key', '') }}" placeholder="sk-ant-...">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="anthropic_model">Model</label>
+            <input class="form-input" type="text" name="anthropic_model" id="anthropic_model"
+                   value="{{ settings.get('anthropic_model', 'claude-3-5-sonnet-20241022') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="anthropic_base_url">Base URL</label>
+            <input class="form-input" type="text" name="anthropic_base_url" id="anthropic_base_url"
+                   value="{{ settings.get('anthropic_base_url', 'https://api.anthropic.com') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="anthropic_timeout">Timeout (s)</label>
+            <input class="form-input" type="number" name="anthropic_timeout" id="anthropic_timeout"
+                   value="{{ settings.get('anthropic_timeout', '60') }}">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Google Gemini</h3>
+        <div class="settings-row">
+            <label class="form-label" for="gemini_api_key">API Key</label>
+            <input class="form-input" type="password" name="gemini_api_key" id="gemini_api_key"
+                   value="{{ settings.get('gemini_api_key', '') }}" placeholder="AIza...">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="gemini_model">Model</label>
+            <input class="form-input" type="text" name="gemini_model" id="gemini_model"
+                   value="{{ settings.get('gemini_model', 'gemini-1.5-pro') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="gemini_base_url">Base URL</label>
+            <input class="form-input" type="text" name="gemini_base_url" id="gemini_base_url"
+                   value="{{ settings.get('gemini_base_url', 'https://generativelanguage.googleapis.com') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="gemini_timeout">Timeout (s)</label>
+            <input class="form-input" type="number" name="gemini_timeout" id="gemini_timeout"
+                   value="{{ settings.get('gemini_timeout', '60') }}">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>NVIDIA NIM <span class="tooltip">testing / internal</span></h3>
+        <div class="settings-row">
+            <label class="form-label" for="nim_api_key">API Key</label>
+            <input class="form-input" type="password" name="nim_api_key" id="nim_api_key"
+                   value="{{ settings.get('nim_api_key', '') }}" placeholder="nvapi-...">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="nim_model">Model</label>
+            <input class="form-input" type="text" name="nim_model" id="nim_model"
+                   value="{{ settings.get('nim_model', 'z-ai/glm-5.1') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="nim_base_url">Base URL</label>
+            <input class="form-input" type="text" name="nim_base_url" id="nim_base_url"
+                   value="{{ settings.get('nim_base_url', 'https://integrate.api.nvidia.com/v1') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="nim_timeout">Timeout (s)</label>
+            <input class="form-input" type="number" name="nim_timeout" id="nim_timeout"
+                   value="{{ settings.get('nim_timeout', '60') }}">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Ollama <span class="tooltip">local CPU fallback</span></h3>
+        <div class="settings-row">
+            <label class="form-label" for="ollama_url">Ollama URL</label>
+            <input class="form-input" type="text" name="ollama_url" id="ollama_url"
+                   value="{{ settings.get('ollama_url', 'http://localhost:11434/api/generate') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="ollama_timeout">Timeout (s)</label>
+            <input class="form-input" type="number" name="ollama_timeout" id="ollama_timeout"
+                   value="{{ settings.get('ollama_timeout', '120') }}">
+        </div>
+    </div>
+</div>
+
+{# ──────── Tab 2: Agent Runtime ──────── #}
+<div id="panel-agent" class="settings-panel">
+    <div class="settings-section">
+        <h3>Execution</h3>
+        <div class="settings-row">
+            <label class="form-label" for="ghost_max_retries">Max Retries</label>
+            <input class="form-input" type="number" name="ghost_max_retries" id="ghost_max_retries"
+                   value="{{ settings.get('ghost_max_retries', '3') }}" min="0" max="10">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="ghost_mock_ai">Mock Mode</label>
+            <select name="ghost_mock_ai" id="ghost_mock_ai" class="form-input">
+                <option value="false" {% if settings.get('ghost_mock_ai', 'false') == 'false' %}selected{% endif %}>Disabled (real AI calls)</option>
+                <option value="true" {% if settings.get('ghost_mock_ai') == 'true' %}selected{% endif %}>Enabled (mock responses)</option>
+            </select>
+        </div>
+    </div>
+    <div class="settings-section">
+        <h3>Logging</h3>
+        <div class="settings-row">
+            <label class="form-label" for="ghost_log_dir">Log Directory</label>
+            <input class="form-input" type="text" name="ghost_log_dir" id="ghost_log_dir"
+                   value="{{ settings.get('ghost_log_dir', 'logs') }}">
+        </div>
+    </div>
+</div>
+
+{# ──────── Tab 3: Notifications ──────── #}
+<div id="panel-notify" class="settings-panel">
+    <div class="settings-section">
+        <h3>Email (SMTP)</h3>
+        <div class="settings-row">
+            <label class="form-label" for="smtp_host">SMTP Host</label>
+            <input class="form-input" type="text" name="smtp_host" id="smtp_host"
+                   value="{{ settings.get('smtp_host', 'smtp.gmail.com') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="smtp_port">Port</label>
+            <input class="form-input" type="number" name="smtp_port" id="smtp_port"
+                   value="{{ settings.get('smtp_port', '587') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="smtp_user">Username</label>
+            <input class="form-input" type="text" name="smtp_user" id="smtp_user"
+                   value="{{ settings.get('smtp_user', '') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="smtp_pass">Password</label>
+            <input class="form-input" type="password" name="smtp_pass" id="smtp_pass"
+                   value="{{ settings.get('smtp_pass', '') }}">
+        </div>
+    </div>
+    <div class="settings-section">
+        <h3>Webhook</h3>
+        <div class="settings-row">
+            <label class="form-label" for="escalation_webhook_url">Escalation Webhook</label>
+            <input class="form-input" type="text" name="escalation_webhook_url" id="escalation_webhook_url"
+                   value="{{ settings.get('escalation_webhook_url', '') }}" placeholder="https://hooks.example.com/...">
+        </div>
+    </div>
+    <div class="settings-section">
+        <h3>Telegram</h3>
+        <div class="settings-row">
+            <label class="form-label" for="telegram_bot_token">Bot Token</label>
+            <input class="form-input" type="password" name="telegram_bot_token" id="telegram_bot_token"
+                   value="{{ settings.get('telegram_bot_token', '') }}">
+        </div>
+    </div>
+</div>
+
+{# ──────── Tab 4: Billing & License ──────── #}
+<div id="panel-billing" class="settings-panel">
+    <div class="settings-section">
+        <h3>Gumroad</h3>
+        <div class="settings-row">
+            <label class="form-label" for="gumroad_product_id">Product ID</label>
+            <input class="form-input" type="text" name="gumroad_product_id" id="gumroad_product_id"
+                   value="{{ settings.get('gumroad_product_id', '') }}">
+        </div>
+        <div class="settings-row">
+            <label class="form-label" for="gumroad_access_token">Access Token</label>
+            <input class="form-input" type="password" name="gumroad_access_token" id="gumroad_access_token"
+                   value="{{ settings.get('gumroad_access_token', '') }}">
+        </div>
+    </div>
+    <div class="settings-section">
+        <h3>Plan Summary</h3>
+        <div class="card" style="padding: 1.5rem; border: 1px solid var(--border-glass); border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div style="font-family: 'Archivo Black', sans-serif; font-size: 1.25rem;">{{ total_agents }} Agents</div>
+                    <div style="color: var(--text-dim); font-size: 0.85rem;">Across {{ squads|length }} squads</div>
+                </div>
+                <div>
+                    <span class="badge badge--active">ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="settings-actions">
+    <button type="submit" class="btn-blue">SAVE SETTINGS</button>
+    <span class="tooltip">Values are stored in SQLite and override .env defaults at runtime.</span>
+</div>
+
+</form>
+{% endblock %}

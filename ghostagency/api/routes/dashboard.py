@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 from typing import Any
 
+from ghostagency.core import settings_db
 from ghostagency.core.agent_registry import AGENT_REGISTRY, list_agents
 from ghostagency.core.templates import shared_templates as templates
 
@@ -73,27 +74,45 @@ def get_squad_data() -> list[dict]:
 AGENT_LANDING_DATA = {
     "support-tier1": {
         "icon": "🎧",
-        "description": "Handles tier-1 support tickets, FAQs, and basic troubleshooting 24/7 from the client's knowledge base.",
+        "description": (
+            "Handles tier-1 support tickets, FAQs, and basic"
+            " troubleshooting 24/7 from the client's knowledge base."
+        ),
     },
     "support-tier2": {
         "icon": "🔧",
-        "description": "Resolves escalated technical issues, complex billing disputes, and advanced troubleshooting.",
+        "description": (
+            "Resolves escalated technical issues, complex billing"
+            " disputes, and advanced troubleshooting."
+        ),
     },
     "support-billing": {
         "icon": "💳",
-        "description": "Manages subscription billing, invoice disputes, payment processing, and plan upgrades.",
+        "description": (
+            "Manages subscription billing, invoice disputes,"
+            " payment processing, and plan upgrades."
+        ),
     },
     "sales-qualification": {
         "icon": "📈",
-        "description": "Qualifies inbound leads, runs personalized cold outreach, and books meetings onto calendars.",
+        "description": (
+            "Qualifies inbound leads, runs personalized cold"
+            " outreach, and books meetings onto calendars."
+        ),
     },
     "content-social-media": {
         "icon": "📱",
-        "description": "Generates brand-aligned social posts, SEO blog content, and schedules multi-platform distribution.",
+        "description": (
+            "Generates brand-aligned social posts, SEO blog content,"
+            " and schedules multi-platform distribution."
+        ),
     },
     "ops-executive-assistant": {
         "icon": "⚙️",
-        "description": "Acts as an executive assistant — handles scheduling, project routing, and cross-department workflows.",
+        "description": (
+            "Acts as an executive assistant — handles scheduling,"
+            " project routing, and cross-department workflows."
+        ),
     },
 }
 
@@ -104,7 +123,10 @@ async def landing_page(request: Request):
     real_agents = get_real_agent_data()
     for agent in real_agents:
         slug = agent.get("slug", "")
-        data = AGENT_LANDING_DATA.get(slug, {"icon": "🤖", "description": "Specialized AI agent for your clients."})
+        data = AGENT_LANDING_DATA.get(
+            slug,
+            {"icon": "🤖", "description": "Specialized AI agent for your clients."},
+        )
         agent["icon"] = data["icon"]
         agent["description"] = data["description"]
     context = {
@@ -313,6 +335,53 @@ async def stats_page(request: Request):
     }
     # Manual template rendering to work around starlette/jinja2 issue
     template = templates.get_template("stats.html")
+    content = template.render(**context)
+    from starlette.responses import HTMLResponse
+
+    return HTMLResponse(content)
+
+
+# ---------------------------------------------------------------------------
+# Settings page — persisted via SQLite
+# ---------------------------------------------------------------------------
+
+
+@router.get("/settings")
+async def settings_page(request: Request):
+    """Settings page — read values from DB (falls back to env vars)."""
+    settings = settings_db.get_effective()
+    context = {
+        "request": request,
+        "settings": simplify_for_template(settings),
+        "saved": False,
+    }
+    template = templates.get_template("settings.html")
+    content = template.render(**context)
+    from starlette.responses import HTMLResponse
+
+    return HTMLResponse(content)
+
+
+@router.post("/settings")
+async def settings_save(request: Request):
+    """Save settings from form POST body."""
+    form = await request.form()
+    payload: dict[str, str] = {}
+    for key in form:
+        val = form.get(key)
+        if val is not None and isinstance(val, str):
+            payload[key.strip().lower()] = val.strip()
+
+    if payload:
+        settings_db.set_many(payload)
+
+    settings = settings_db.get_effective()
+    context = {
+        "request": request,
+        "settings": simplify_for_template(settings),
+        "saved": True,
+    }
+    template = templates.get_template("settings.html")
     content = template.render(**context)
     from starlette.responses import HTMLResponse
 
