@@ -15,6 +15,7 @@ from ghostagency.agents.squad_ops.ops_executive_assistant import (
     OpsExecutiveAssistantAgent,
 )
 from ghostagency.agents.squad_data.data_research import DataResearchAgent
+from ghostagency.agents.squad_dev.dev_code_review import DevCodeReviewAgent
 
 AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     # Support Squad
@@ -29,9 +30,11 @@ AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     "ops-executive-assistant": OpsExecutiveAssistantAgent,
     # Data Squad
     "data-research": DataResearchAgent,
+    # Dev Squad
+    "dev-code-review": DevCodeReviewAgent,
 }
 
-TOTAL_AGENTS = 7
+TOTAL_AGENTS = 8
 
 
 def get_agent(slug: str) -> Type[AIAgent]:
