@@ -9,7 +9,7 @@
 ## Overview
 
 <p align="center">
-  <img src="screenshots/landing.png" alt="Ghost Agency — Landing Page" width="800">
+  <img src="screenshots/dashboard.png" alt="Ghost Agency — Dashboard" width="800">
 </p>
 
 Ghost Agency is an **AI Workforce-as-a-Service** platform with a Glass Brutalism dashboard, multi-provider LLM support, and 6 specialized AI agents (scaling to 156+). Each agent acts as a virtual employee — handling support tickets, qualifying leads, creating content, and more.
@@ -20,33 +20,31 @@ Ghost Agency is an **AI Workforce-as-a-Service** platform with a Glass Brutalism
 
 <table>
   <tr>
-    <td align="center"><b>Landing Page</b></td>
     <td align="center"><b>Dashboard</b></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/landing.png" alt="Landing" width="400"></td>
-    <td><img src="screenshots/dashboard.png" alt="Dashboard" width="400"></td>
-  </tr>
-  <tr>
     <td align="center"><b>Agents</b></td>
-    <td align="center"><b>Clients</b></td>
   </tr>
   <tr>
+    <td><img src="screenshots/dashboard.png" alt="Dashboard" width="400"></td>
     <td><img src="screenshots/agents.png" alt="Agents" width="400"></td>
-    <td><img src="screenshots/clients.png" alt="Clients" width="400"></td>
   </tr>
   <tr>
+    <td align="center"><b>Clients</b></td>
     <td align="center"><b>Stats</b></td>
-    <td align="center"><b>Settings</b></td>
   </tr>
   <tr>
+    <td><img src="screenshots/clients.png" alt="Clients" width="400"></td>
     <td><img src="screenshots/stats.png" alt="Stats" width="400"></td>
-    <td><img src="screenshots/settings.png" alt="Settings" width="400"></td>
   </tr>
 </table>
 
 <details>
-<summary><b>API Documentation (Swagger)</b></summary>
+<summary><b>Settings & API Documentation</b></summary>
+
+<br>
+<b>Settings Page</b><br>
+<img src="screenshots/settings.png" alt="Settings" width="800">
+<br><br>
+<b>API Documentation (Swagger)</b><br>
 <img src="screenshots/api-docs.png" alt="API Docs" width="800">
 </details>
 
