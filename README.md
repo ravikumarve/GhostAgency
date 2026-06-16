@@ -6,6 +6,52 @@
 
 ---
 
+## Overview
+
+<p align="center">
+  <img src="screenshots/landing.png" alt="Ghost Agency — Landing Page" width="800">
+</p>
+
+Ghost Agency is an **AI Workforce-as-a-Service** platform with a Glass Brutalism dashboard, multi-provider LLM support, and 6 specialized AI agents (scaling to 156+). Each agent acts as a virtual employee — handling support tickets, qualifying leads, creating content, and more.
+
+---
+
+## Dashboard Screenshots
+
+<table>
+  <tr>
+    <td align="center"><b>Landing Page</b></td>
+    <td align="center"><b>Dashboard</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/landing.png" alt="Landing" width="400"></td>
+    <td><img src="screenshots/dashboard.png" alt="Dashboard" width="400"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Agents</b></td>
+    <td align="center"><b>Clients</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/agents.png" alt="Agents" width="400"></td>
+    <td><img src="screenshots/clients.png" alt="Clients" width="400"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Stats</b></td>
+    <td align="center"><b>Settings</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/stats.png" alt="Stats" width="400"></td>
+    <td><img src="screenshots/settings.png" alt="Settings" width="400"></td>
+  </tr>
+</table>
+
+<details>
+<summary><b>API Documentation (Swagger)</b></summary>
+<img src="screenshots/api-docs.png" alt="API Docs" width="800">
+</details>
+
+---
+
 ## Quick Start
 
 ```bash
@@ -22,6 +68,12 @@ PYTHONPATH=. GHOST_MOCK_AI=true python ghostagency/demo/run_demo.py
 See all available agents:
 ```bash
 PYTHONPATH=. python ghostagency/scripts/list_agents.py
+```
+
+Launch the dashboard:
+```bash
+PYTHONPATH=. uvicorn ghostagency.api.main:app --host 0.0.0.0 --port 8000
+# Open http://localhost:8000
 ```
 
 ---
@@ -57,12 +109,14 @@ Client → Agent Registry → AI Agent → Knowledge Base → LLM → Response
 | API | FastAPI · REST · async |
 | Auth | License key + API key middleware |
 | Rate limiting | In-memory per-key throttling |
+| Settings | SQLite key-value store with runtime overrides |
+| UI | Glass Brutalism · Jinja2 · CSS animations |
 | Logging | Structured JSON per interaction |
 | Packaging | Install script · `.env.example` · LICENSE |
 
 ### Config
 
-Select provider via `LLM_PROVIDER` env var. Example switching to Anthropic:
+Select provider via `LLM_PROVIDER` env var or the Settings page at `/settings`. Example switching to Anthropic:
 
 ```env
 LLM_PROVIDER=anthropic
@@ -115,8 +169,11 @@ bash install.sh
 ## Status
 
 - **6 agents** deployed across 4 squads
-- **51/51 tests** passing
+- **91/91 tests** passing
 - **Core coverage** 100% · Overall 47%
+- **5 LLM providers** — OpenAI, Anthropic, Gemini, NIM, Ollama
+- **Settings page** with SQLite persistence
+- **Glass Brutalism UI** with landing page + dashboard
 - **Ready** for single-tenant deployment
 
 ---

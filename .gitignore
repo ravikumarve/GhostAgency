@@ -57,6 +57,20 @@ htmlcov/
 # Demo files
 demo_kb/
 
+# Local SQLite databases
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Server debris
+nohup.out
+server.log
+api.log
+
+# Design reference files (not shipped)
+webpages/
+
 # Local dev config (never ship)
 .opencode/
 .ruff_cache/
