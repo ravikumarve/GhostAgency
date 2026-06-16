@@ -1,3 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "ghostagency"
+version = "1.0.0"
+description = "AI Employee Platform — multi-agent SaaS with 12 AI agents across 10 squads"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.135.0",
+    "uvicorn[standard]>=0.27.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.9.0",
+    "jinja2>=3.1.2",
+    "python-multipart>=0.0.9",
+]
+
+[tool.setuptools.packages.find]
+include = ["ghostagency*"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
