@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  quality:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install black==24.4.2 flake8==7.1.0 mypy==1.10.0
+
+      - name: Check formatting with black
+        run: black --check --line-length 100 .
+
+      - name: Lint with flake8
+        run: flake8 . --max-line-length 100 --exclude .venv,__pycache__,logs
+
+      - name: Type check with mypy
+        run: mypy ghostagency/core/ ghostagency/agents/ --ignore-missing-imports
+
+  test:
+    name: Tests & Registry Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests (mock AI mode)
+        run: pytest --tb=short -q
+        env:
+          GHOST_MOCK_AI: "true"
+
+      - name: Validate agent registry
+        run: python -c "from ghostagency.core.agent_registry import AGENT_REGISTRY; print(f'{len(AGENT_REGISTRY)} agents registered ✓')"
+        env:
+          GHOST_MOCK_AI: "true"
