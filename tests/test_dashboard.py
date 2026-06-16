@@ -36,7 +36,7 @@ class TestDashboardFunctionality:
         agents = get_real_agent_data()
 
         # Assert
-        assert len(agents) == 6, f"Expected 6 agents, got {len(agents)}"
+        assert len(agents) == 12, f"Expected 12 agents, got {len(agents)}"
         assert len(agents) == len(AGENT_REGISTRY), "Agent count should match registry"
 
     def test_list_agents_function_matches_get_real_agent_data(self):
@@ -47,7 +47,7 @@ class TestDashboardFunctionality:
 
         # Assert
         assert len(agents_from_list) == len(agents_from_real)
-        assert len(agents_from_list) == 6
+        assert len(agents_from_list) == 12
 
     def test_dashboard_context_has_correct_counts(self):
         """Test that dashboard context contains correct agent counts."""
@@ -62,8 +62,8 @@ class TestDashboardFunctionality:
         }
 
         # Assert
-        assert context["total_agents"] == 6
-        assert context["online_agents"] == 6
+        assert context["total_agents"] == 12
+        assert context["online_agents"] == 12
         assert context["offline_agents"] == 0
         assert context["total_agents"] == context["online_agents"]
 
@@ -87,8 +87,8 @@ class TestDashboardFunctionality:
         call_args = mock_template.render.call_args
         context = call_args[1]  # kwargs passed to render
 
-        assert context["total_agents"] == 6
-        assert context["online_agents"] == 6
+        assert context["total_agents"] == 12
+        assert context["online_agents"] == 12
         assert context["offline_agents"] == 0
 
     def test_landing_page_route_returns_correct_context(self, test_client, test_headers, mock_auth):
@@ -106,8 +106,8 @@ class TestDashboardFunctionality:
         call_args = mock_template.render.call_args
         context = call_args[1]
 
-        assert context["total_agents"] == 6
-        assert len(context["agents"]) == 6
+        assert context["total_agents"] == 12
+        assert len(context["agents"]) == 12
 
     def test_agents_page_route_returns_correct_data(self, test_client, test_headers, mock_auth):
         """Test that agents page route returns correct agent data."""
@@ -129,20 +129,20 @@ class TestDashboardFunctionality:
         call_args = mock_template.render.call_args
         context = call_args[1]  # kwargs passed to render
 
-        assert context["total_agents"] == 6
-        assert len(context["agents"]) == 6
+        assert context["total_agents"] == 12
+        assert len(context["agents"]) == 12
 
         # Verify all agents have status field
         for agent in context["agents"]:
             assert agent["status"] == "online"
 
     def test_registry_integrity(self):
-        """Test that agent registry contains exactly 6 agents."""
+        """Test that agent registry contains exactly 12 agents."""
         # Act
         agent_count = len(AGENT_REGISTRY)
 
         # Assert
-        assert agent_count == 6, f"Expected 6 agents in registry, found {agent_count}"
+        assert agent_count == 12, f"Expected 12 agents in registry, found {agent_count}"
 
         # Verify specific agents exist
         expected_agents = [
@@ -152,6 +152,12 @@ class TestDashboardFunctionality:
             "sales-qualification",
             "content-social-media",
             "ops-executive-assistant",
+            "data-research",
+            "dev-code-review",
+            "finance-invoicing",
+            "hr-recruiting",
+            "legal-contract-review",
+            "custom-generic",
         ]
 
         for agent_slug in expected_agents:

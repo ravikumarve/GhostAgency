@@ -32,8 +32,8 @@ class TestDashboardIntegration:
         call_args = mock_template.render.call_args
         context = call_args[1]  # kwargs passed to render
 
-        assert context["total_agents"] == 6
-        assert context["online_agents"] == 6
+        assert context["total_agents"] == 12
+        assert context["online_agents"] == 12
         assert context["offline_agents"] == 0
 
     def test_landing_page_route_returns_correct_context(self, test_client, test_headers, mock_auth):
@@ -51,8 +51,8 @@ class TestDashboardIntegration:
         call_args = mock_template.render.call_args
         context = call_args[1]
 
-        assert context["total_agents"] == 6
-        assert len(context["agents"]) == 6
+        assert context["total_agents"] == 12
+        assert len(context["agents"]) == 12
 
     def test_agents_page_route_returns_correct_data(self, test_client, test_headers, mock_auth):
         """Test that agents page route returns correct agent data."""
@@ -74,20 +74,20 @@ class TestDashboardIntegration:
         call_args = mock_template.render.call_args
         context = call_args[1]  # kwargs passed to render
 
-        assert context["total_agents"] == 6
-        assert len(context["agents"]) == 6
+        assert context["total_agents"] == 12
+        assert len(context["agents"]) == 12
 
         # Verify all agents have status field
         for agent in context["agents"]:
             assert agent["status"] == "online"
 
     def test_registry_integrity(self):
-        """Test that agent registry contains exactly 6 agents."""
+        """Test that agent registry contains exactly 12 agents."""
         # Act
         agent_count = len(AGENT_REGISTRY)
 
         # Assert
-        assert agent_count == 6, f"Expected 6 agents in registry, found {agent_count}"
+        assert agent_count == 12, f"Expected 12 agents in registry, found {agent_count}"
 
         # Verify specific agents exist
         expected_agents = [
@@ -97,6 +97,12 @@ class TestDashboardIntegration:
             "sales-qualification",
             "content-social-media",
             "ops-executive-assistant",
+            "data-research",
+            "dev-code-review",
+            "finance-invoicing",
+            "hr-recruiting",
+            "legal-contract-review",
+            "custom-generic",
         ]
 
         for agent_slug in expected_agents:

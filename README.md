@@ -79,19 +79,19 @@ PYTHONPATH=. uvicorn ghostagency.api.main:app --host 0.0.0.0 --port 8000
 ## AI Workforce
 
 | Department | Agents | Price/mo | Capability |
-|---|---|---|---|
+|---|---|---|---|---|
 | Support | 3 | $600–900 | Tickets, billing, technical help |
 | Sales | 1 | $900–1,500 | Lead qualification, outreach |
 | Content | 1 | $500–800 | Social media, blog, SEO |
 | Operations | 1 | $1,200–2,000 | EA, scheduling, projects |
-| Data | — | Coming soon | Research, analytics, reporting |
-| Dev | — | Coming soon | Code review, QA, technical support |
-| Finance | — | Coming soon | Invoicing, expense tracking |
-| HR | — | Coming soon | Recruitment, onboarding |
-| Legal | — | Coming soon | Contract review, compliance |
-| Custom | — | Custom | Client-specific agents |
+| Data | 1 | $1,000 | Research, analytics, reporting |
+| Dev | 1 | $1,500 | Code review, QA, technical support |
+| Finance | 1 | $800 | Invoicing, expense tracking |
+| HR | 1 | $900 | Recruitment, onboarding |
+| Legal | 1 | $2,000 | Contract review, compliance |
+| Custom | 1 | Custom | Client-specific agents |
 
-**Current total: 6 agents** — built to scale to 156+ specialized roles.
+**Current total: 12 agents** — built to scale to 156+ specialized roles.
 
 ---
 
@@ -166,9 +166,7 @@ bash install.sh
 
 ## Status
 
-- **6 agents** deployed across 4 squads
-- **91/91 tests** passing
-- **Core coverage** 100% · Overall 47%
+- **12 agents** deployed across **10 squads** (all departments filled)
 - **5 LLM providers** — OpenAI, Anthropic, Gemini, NIM, Ollama
 - **Settings page** with SQLite persistence
 - **Glass Brutalism UI** with landing page + dashboard
