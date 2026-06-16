@@ -19,6 +19,7 @@ from ghostagency.agents.squad_dev.dev_code_review import DevCodeReviewAgent
 from ghostagency.agents.squad_finance.finance_invoicing import FinanceInvoicingAgent
 from ghostagency.agents.squad_hr.hr_recruiting import HRRecruitingAgent
 from ghostagency.agents.squad_legal.legal_contract_review import LegalContractReviewAgent
+from ghostagency.agents.squad_custom.custom_generic import CustomGenericAgent
 
 AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     # Support Squad
@@ -41,9 +42,11 @@ AGENT_REGISTRY: dict[str, Type[AIAgent]] = {
     "hr-recruiting": HRRecruitingAgent,
     # Legal Squad
     "legal-contract-review": LegalContractReviewAgent,
+    # Custom Squad
+    "custom-generic": CustomGenericAgent,
 }
 
-TOTAL_AGENTS = 11
+TOTAL_AGENTS = 12
 
 
 def get_agent(slug: str) -> Type[AIAgent]:
